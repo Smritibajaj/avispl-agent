@@ -7,6 +7,7 @@ import { GOLDEN_QUERIES } from "../lib/golden-queries";
 import { extractEvidence } from "../lib/message-evidence";
 import type { ChatMessage } from "../lib/tools";
 import { AssistantMessage } from "./AssistantMessage";
+import { BrandLogo } from "./BrandLogo";
 
 export { GOLDEN_QUERIES };
 
@@ -77,12 +78,10 @@ const ICON = {
 export function Chat({
   target,
   modelMode,
-  logoSrc,
 }: {
   backend: string;
   target: "fixtures" | "offline-mock" | "hosted";
   modelMode: "anthropic" | "gateway" | "demo" | "unconfigured";
-  logoSrc?: string;
 }) {
   const [input, setInput] = useState("");
   const [theme, setTheme] = useState<Theme>("light");
@@ -225,15 +224,7 @@ export function Chat({
     <div className={`app${sidebarOpen ? "" : " sidebar-collapsed"}${drawerOpen ? " drawer-open" : ""}`}>
       <aside className="sidebar" aria-label="Chats">
         <div className="sidebar-head">
-          {logoSrc ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img className="brand-logo" src={logoSrc} alt="AVI-SPL" height={24} />
-          ) : (
-            // TODO(Nancy): replaced automatically by public/brand/logo.svg once the approved logo file is added.
-            <span className="wordmark" aria-label="AVI-SPL">
-              AVI-SPL
-            </span>
-          )}
+          <BrandLogo className="brand-logo" />
           <button type="button" className="icon-btn" onClick={toggleSidebar} aria-label="Close sidebar" title="Close sidebar">
             <Icon d={ICON.sidebar} />
           </button>
@@ -275,6 +266,7 @@ export function Chat({
             <button type="button" className="icon-btn topbar-new" onClick={startNewChat} aria-label="New chat" title="New chat">
               <Icon d={ICON.newChat} />
             </button>
+            <BrandLogo className="brand-logo topbar-logo" height={20} />
             <span className="topbar-title">Meeting-room advisor</span>
           </div>
           <button

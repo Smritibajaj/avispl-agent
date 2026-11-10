@@ -34,8 +34,38 @@ function inline(text: string, keyBase: string): ReactNode[] {
 /** Citations ([S1], [S2][S4]) are kept in the model's text for grounding checks but are not shown. */
 export const stripCitations = (text: string): string => text.replace(/[ \t]*(\[S\d+\?*\])+/g, "");
 
+/**
+ * While an answer streams in, its tail can end inside a marker ("[S1", "**Monit"). Drop the dangling piece so
+ * the reader never sees raw brackets or asterisks flash by. A finished answer is returned unchanged.
+ */
+export function tidyPartial(text: string): string {
+  let t = text.replace(/[ \t]*\[[Ss]?\d*\??$/, "");
+  if ((t.match(/\*\*/g) ?? []).length % 2 === 1) {
+    const i = t.lastIndexOf("**");
+    t = t.slice(0, i) + t.slice(i + 2);
+  }
+  return t.replace(/\*$/, "");
+}
+
 export function RichText({ text }: Props) {
-  const blocks = stripCitations(text).replace(/\r\n/g, "\n").split(/\n{2,}/);
+  // A blank line always starts a new block. Inside a block, a run of list lines after ordinary lines
+  // ("**Lead-in:**" followed directly by "- item") becomes its own block, so it renders as a real list.
+  const LIST_RE = /^\s*([-*•]|\d+[.)])\s+/;
+  const blocks = tidyPartial(stripCitations(text))
+    .replace(/\r\n/g, "\n")
+    .split(/\n{2,}/)
+    .flatMap((block) => {
+      const runs: string[][] = [];
+      let lastWasList: boolean | undefined;
+      for (const line of block.split("\n")) {
+        if (line.trim() === "") continue;
+        const isListLine = LIST_RE.test(line);
+        if (isListLine !== lastWasList) runs.push([]);
+        runs[runs.length - 1]!.push(line);
+        lastWasList = isListLine;
+      }
+      return runs.map((r) => r.join("\n"));
+    });
   return (
     <div className="rich">
       {blocks.map((block, bi) => {
