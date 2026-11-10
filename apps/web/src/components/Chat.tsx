@@ -386,8 +386,6 @@ export function Chat({
             </div>
           </main>
         )}
-
-        <p className="footnote">Answers come only from AVI-SPL meeting-room content. Check the sources before you rely on them.</p>
       </div>
     </div>
   );

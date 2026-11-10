@@ -8,7 +8,7 @@ import { extractEvidence } from "../lib/message-evidence";
 import { runFindCaseStudies, runSearchJourney } from "../lib/tool-logic";
 import { AssistantMessage } from "./AssistantMessage";
 
-test("answer renders [S#] as source links, cards with badges, licensing notice and CTA; no graph UI", async () => {
+test("answer hides [S#] markers, no source cards, licensing notice, no CTA or copy button; no graph UI", async () => {
   const store = new MockKnowledgeStore();
   const reg = new RefRegistry();
   const a = await runSearchJourney(store, reg, { query: "monitoring escalation support" });
@@ -26,14 +26,12 @@ test("answer renders [S#] as source links, cards with badges, licensing notice a
   const html = renderToStaticMarkup(
     createElement(AssistantMessage, { ev, streaming: false }),
   );
-  assert.match(html, /Searched 2 times/);
-  assert.ok(html.includes(`href="${first.sourceUrl}"`), "citation links to source URL");
-  assert.match(html, /Older platform generation/);
-  assert.match(html, /Figures are estimates/);
-  assert.match(html, /cite-unknown[^>]*>S77\?/);
+  assert.doesNotMatch(html, /Searched \d+ time/);
+  assert.doesNotMatch(html, /\[S\d+\]|class="cite/, "citation chips are not shown");
+  assert.match(html, /Rooms are monitored\. Older proof, estimates\. Bad\./, "text reads cleanly without the markers");
+  assert.doesNotMatch(html, /source-card|Also retrieved|Retrieved sources/);
   assert.match(html, /pending approval/);
-  assert.match(html, /Talk to an AVI-SPL expert/);
-  assert.ok(html.includes('href="https://avispl.com"'));
+  assert.doesNotMatch(html, /Next step|cta-btn|Copy/, "no copy button and no next-step button");
 
   assert.doesNotMatch(html, /Graph ·|graph-/);
 });

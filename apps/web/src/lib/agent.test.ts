@@ -78,6 +78,6 @@ test("agent loop: tools run against the mock store and the UI stream carries hit
   // the model received the system prompt via `instructions`
   const first = model.doStreamCalls[0];
   const sys = first?.prompt.find((p) => p.role === "system");
-  assert.ok(sys && typeof sys.content === "string" && sys.content.includes("meeting-room advisor"));
+  assert.ok(sys && typeof sys.content === "string" && sys.content.includes("meeting-room expert"));
   assert.equal(model.doStreamCalls.length, 2);
 });

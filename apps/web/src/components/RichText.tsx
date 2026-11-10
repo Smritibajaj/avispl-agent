@@ -1,15 +1,11 @@
 import { Fragment, type ReactNode } from "react";
-import { parseCitations } from "../lib/citations";
-import type { ToolHit } from "../lib/tool-logic";
 
 /**
- * Minimal, safe markdown: paragraphs, "-"/"*"/"1." lists, ### headings, **bold**, bare URLs,
- * and [S#] citations turned into links to the cited source. No HTML is ever injected.
+ * Minimal, safe markdown: paragraphs, "-"/"*"/"1." lists, ### headings, **bold** and bare URLs.
+ * [S#] citation markers are removed from the visible text. No HTML is ever injected.
  */
 interface Props {
   text: string;
-  hits: Map<string, ToolHit>;
-  onCite?: (ref: string) => void;
 }
 
 const URL_RE = /(https?:\/\/[^\s<>()\]]+[^\s<>()\].,;:!?'"])/g;
@@ -35,41 +31,11 @@ function inline(text: string, keyBase: string): ReactNode[] {
   return out;
 }
 
-function withCitations(line: string, hits: Map<string, ToolHit>, keyBase: string, onCite?: (ref: string) => void) {
-  return parseCitations(line).map((seg, i) => {
-    if (seg.type === "text") return <Fragment key={`${keyBase}-${i}`}>{inline(seg.value, `${keyBase}-${i}`)}</Fragment>;
-    return (
-      <span key={`${keyBase}-${i}`} className="cites">
-        {seg.refs.map((ref) => {
-          const h = hits.get(ref);
-          if (!h)
-            return (
-              <span key={ref} className="cite cite-unknown" title="This reference does not match any retrieved source">
-                {ref}?
-              </span>
-            );
-          return (
-            <a
-              key={ref}
-              className="cite"
-              href={h.sourceUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              title={`${h.title}${h.pageRange ? ` (pp. ${h.pageRange})` : ""}`}
-              onMouseEnter={() => onCite?.(ref)}
-              onFocus={() => onCite?.(ref)}
-            >
-              {ref}
-            </a>
-          );
-        })}
-      </span>
-    );
-  });
-}
+/** Citations ([S1], [S2][S4]) are kept in the model's text for grounding checks but are not shown. */
+export const stripCitations = (text: string): string => text.replace(/[ \t]*(\[S\d+\?*\])+/g, "");
 
-export function RichText({ text, hits, onCite }: Props) {
-  const blocks = text.replace(/\r\n/g, "\n").split(/\n{2,}/);
+export function RichText({ text }: Props) {
+  const blocks = stripCitations(text).replace(/\r\n/g, "\n").split(/\n{2,}/);
   return (
     <div className="rich">
       {blocks.map((block, bi) => {
@@ -79,7 +45,7 @@ export function RichText({ text, hits, onCite }: Props) {
         if (isList) {
           const ordered = /^\s*\d/.test(lines[0]!);
           const items = lines.map((l, li) => (
-            <li key={li}>{withCitations(l.replace(/^\s*([-*•]|\d+[.)])\s+/, ""), hits, `b${bi}l${li}`, onCite)}</li>
+            <li key={li}>{inline(l.replace(/^\s*([-*•]|\d+[.)])\s+/, ""), `b${bi}l${li}`)}</li>
           ));
           return ordered ? <ol key={bi}>{items}</ol> : <ul key={bi}>{items}</ul>;
         }
@@ -87,7 +53,7 @@ export function RichText({ text, hits, onCite }: Props) {
         if (h && lines.length === 1)
           return (
             <h4 key={bi} className="rich-h">
-              {withCitations(h[2]!, hits, `b${bi}h`, onCite)}
+              {inline(h[2]!, `b${bi}h`)}
             </h4>
           );
         return (
@@ -95,7 +61,7 @@ export function RichText({ text, hits, onCite }: Props) {
             {lines.map((l, li) => (
               <Fragment key={li}>
                 {li > 0 && <br />}
-                {withCitations(l.replace(/^#{1,4}\s+/, ""), hits, `b${bi}p${li}`, onCite)}
+                {inline(l.replace(/^#{1,4}\s+/, ""), `b${bi}p${li}`)}
               </Fragment>
             ))}
           </p>
