@@ -63,3 +63,44 @@ Boilerplate to strip on every avispl.com page: the mega-menu (Video Walls, broad
   2. **prod** = hosted HydraDB, database `avispl_meeting_room_v0`, same schema.
   3. **offline** = `packages/hydra` mock server in Docker (port 4010): HydraDB-compatible SUBSET for plumbing tests only. It proves nothing about relevance or graph quality and must label its responses `mock: true`.
 - `HYDRADB_BASE_URL` (default `https://api.hydradb.com`) selects the target.
+
+## 5. HydraDB findings (hydra-agent, 2026-11-10; docs + SDK types + mock only, NOT live)
+
+Verified from installed `@hydradb/sdk` 2.1.8 types and v2 docs:
+- The SDK accepts a `baseUrl` override (corrects section 4). `packages/hydra` uses the SDK only; the same client targets hosted HydraDB and the mock.
+- The query response has no `data.sources[]`; citations come from chunk `metadata`. `additional_context` is a map keyed by chunk id (it includes neighbouring chunks); forceful links are in `data.forceful_relations.declared`.
+- `source_chunk_ids` is per query path; each triplet `relation` carries its own `chunk_id`. `origin` is documented only for BYOG.
+- `enable_match` exists on schema fields; `packages/hydra/src/schema.ts` sets it on the 9 filter fields at creation (not in the shared contract yet).
+- `context.chunks` / `context.inspect` exist (corrects "no get-chunk-by-id call"); unused.
+- Ingest returns 202; forceful links "can be lost while ingestion rebuilds the graph". Delete returns 200 unless `X-HydraDB-Delete-Status: strict`; 409 `SOURCE_PROCESSING` while indexing.
+- Reserved names: `source_id`, `chunk_id`, `metadata`. A misspelled filter operator silently returns empty. `metadata_filters` capped at 64 KiB / 500 values per list.
+
+Still UNVERIFIED (needs `pnpm hydra smoke` against the DEV database with a real key):
+- `contains` token vs substring; which metadata fields chunks return; whether `additional_metadata` comes back (if not, add a `manifest_source_id` VARCHAR(64) field to the shared schema, additive); real graph/triplet shape; thinking-mode latency vs the store's 5 s timeout; ingest -> `completed` time; whether `equals` works on `section` (it has embedding flags).
+
+## 5. Verified by hydra-agent
+
+Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw JSON in packages/hydra/smoke-results/.
+
+### Smoke run 20261110173908 (2026-11-10T17:39:08.859Z, avispl_meeting_room_dev, @hydradb/sdk 2.1.8)
+- Ingest: phase1 8/8 completed; ms to graph_creation {"min":2617,"median":2617,"max":2617,"n":8}; ms to completed {"min":15740,"median":28884,"max":28884,"n":8}; statuses seen ["graph_creation","completed"].
+- Phase 2 relations: {"sent":1,"completed":1,"relationsCreated":1,"relationsErrors":[],"errored":[],"durationMs":20224}
+- contains semantics: topics contains "equity" (substring of meeting_equity) -> HTTP 200, records [] => token (comma-member) match; contains "cisco" on "microsoft,cisco" -> ["#1","#3"]; equals "cisco" -> ["#3"]; contains_any [zoom,cisco] -> ["#1","#2","#3"].
+- BOOL equals false -> ["#4"]; undeclared filter key -> HTTP 200 records []; valid no-match filter -> []; nested additional_metadata -> ["#3"]; text query exact token -> ["#5"].
+- Chunk metadata returned: ["journey_stage","content_type","platforms","vendors","topics","room_sizes","industry","status","meeting_room_relevant","requires_disclosure","legacy_platform","metrics_are_estimates","edition","page_url","page_title","section","page_range","last_modified","cs_organization","cs_location","cs_rooms_count","last_crawled"]; MISSING: []; additional_metadata returned: true; data.sources present: true.
+- data keys ["tabular_data","chunks","sources","graph_context","additional_context","graph","forceful_relations"]; chunk keys ["chunk_uuid","id","collection","sub_tenant_id","chunk_content","source_type","source_upload_time","source_title","source_last_updated_time","layout","relevancy_score","additional_metadata","metadata","extra_context_ids"]; chunks per record {"smoke-20261110173908-1":1,"smoke-20261110173908-2":1,"smoke-20261110173908-6":1,"smoke-20261110173908-8":1,"smoke-20261110173908-3":1,"smoke-20261110173908-5":1,"smoke-20261110173908-7":1,"smoke-20261110173908-4":1}.
+- graph_context: keys ["query_paths","chunk_relations","chunk_id_to_group_ids"], query_paths 3, chunk_relations 14, path keys ["triplets","relevancy_score","combined_context","group_id","source_chunk_ids"], source_chunk_ids resolving to returned chunks null, origin present false. Example triplet: `{"source":{"entity_id":"8476c998da114ab579e9f13eceb66fb8","identifier":null,"name":"fjordlantern","namespace":"organizations","type":"ORGANIZATION"},"relation":{"canonical_predicate":"has standard room template","chunk_id":"smoke-20261110173908-6_chunk_0000","context":"Fjordlantern has a standard room template that specifies one display for huddle rooms and two displays for medium rooms.","raw_predicate":"has standard room template","relationship_id":"da1405ec9cdd7f19289b310bac697783","source_entity_id":"8476c998da114ab579e9f13eceb66fb8","target_entity_id":"769caf9846fef2fdc4ffe15280c7c990","temporal_details":null,"timestamp":1794332376.262029},"target":{"entity_id":"769caf9846fef2fdc4ffe15280c7c990","identifier":null,"name":"standard room template","namespace":"concepts","type":"CONCEPT"}}`
+- additional_context: 0 entries, record ids []; forceful-relation target found: true; forceful_relations field: {"declared":[],"inferred":[]}.
+- Latency (client wall ms, 20 results, filtered): thinking {"min":1880,"median":2716,"max":3389,"n":3}, fast {"min":625,"median":804,"max":819,"n":3}.
+- Ingest rejections: [{"name":"undeclared_metadata_key","accepted":false,"status":400,"code":"INVALID_INPUT"},{"name":"additional_metadata_over_1KiB","accepted":false,"status":400,"code":"INVALID_INPUT"}].
+- Store hard filters hide needs_review records: {"hits":0,"smokeHits":0,"relaxed":true,"latencyMs":294}.
+- Cleanup: {"ids":8,"result":{"success":true,"message":"Successfully deleted 8 source(s)","results":[{"id":"smoke-20261110173908-1","deleted":true},{"id":"smoke-20261110173908-2","deleted":true},{"id":"smoke-20261110173908-3","deleted":true},{"id":"smoke-20261110173908-4","deleted":true},{"id":"smoke-202611101
+
+## 6. Decisions on 2026-11-10 (evening)
+
+- **Licensing disclosure approved by the project owner** ("approve all the things, nothing is pending on Nancy"). `packages/shared/content/disclosure.txt` now holds the paragraph from the Smart Workplace eBook page, copied verbatim from `packages/ingest/data/review/disclosure-candidate.txt`. Known wrinkle: it says "features listed below", which reads oddly at the end of a chat answer; wording may only change with a new approved text.
+- `requires_disclosure` is set per record (text names Copilot, Microsoft Places or Teams Premium), no longer per source, so the disclosure is not appended to unrelated answers (monitoring, support).
+- HydraDB reserves the metadata field name `source_url` (undocumented); the hydra package stores it as `page_url`.
+- Ollama support removed; the app runs Claude models only. Graph panel removed from the UI at the owner's request.
+- Dev database `avispl_meeting_room_dev` holds 251 published records from 54 sources. Still unavailable: Reference Designs PDF (404), standardization eBook (form), "Bowling Alley" and "Hybrid Meeting Hacks" eBooks (not found), Symphony docs (login), Elevate eBook sub-pages (not scraped).
+- **Later the same evening: the owner decided no licensing disclosure is required.** It is switched OFF by default (`apps/web/src/config/disclosure.ts`). Answers no longer call `getLicensingDisclosure` or append the disclosure; licensing statements appear only as cited source content. `LICENSING_DISCLOSURE=on` in `.env` turns it back on (the approved text stays in `packages/shared/content/disclosure.txt`). This supersedes hard rule 2 in CLAUDE.md while the switch is off; the "never invent licensing text" part of rule 1 still applies.

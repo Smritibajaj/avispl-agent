@@ -1,5 +1,19 @@
 {
   "$schema": "https://turborepo.com/schema.json",
+  "globalPassThroughEnv": [
+    "KNOWLEDGE_BACKEND",
+    "HYDRADB_API_KEY",
+    "HYDRADB_BASE_URL",
+    "HYDRADB_DATABASE",
+    "HYDRADB_COLLECTION",
+    "CHAT_MODEL",
+    "AI_GATEWAY_API_KEY",
+    "ANTHROPIC_API_KEY",
+    "VERCEL_OIDC_TOKEN",
+    "FIRECRAWL_API_KEY",
+    "AVISPL_ENV_FILE",
+    "DISCLOSURE_PATH"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],

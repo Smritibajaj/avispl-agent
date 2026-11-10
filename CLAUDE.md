@@ -19,7 +19,7 @@ Data flow: ingest writes `packages/ingest/data/records.jsonl` -> hydra creates t
 ## Hard rules
 
 1. Never invent: URL suffixes, licensing text, room specs, outcomes, SLAs, prices. A mention is not a deployment.
-2. The Microsoft licensing disclosure is reproduced word for word, from `packages/shared/content/disclosure.txt`, only after Nancy approves the text. While the file holds `__PENDING_NANCY_APPROVAL__`, nothing may paraphrase or invent it.
+2. The Microsoft licensing disclosure is OFF by default (owner decision 2026-11-10: no disclosure required; see `docs/DECISIONS.md` section 6). Answers do not append it; licensing statements appear only as cited source content, never invented (rule 1). If it is switched back on with `LICENSING_DISCLOSURE=on`, it is reproduced word for word from `packages/shared/content/disclosure.txt`, never paraphrased; while that file holds `__PENDING_NANCY_APPROVAL__`, nothing may paraphrase or invent it.
 3. Never ingest or cite a truncated URL. Only crawl `avispl.com` (never the regional sites).
 4. `golden_queries` and `priority` stay in the local manifest; never send them to HydraDB.
 5. Never commit `.env`; never print keys.

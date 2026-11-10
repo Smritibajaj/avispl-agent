@@ -1,1 +1,1 @@
-__PENDING_NANCY_APPROVAL__
+Available features listed below must be enabled by the organization and may depend on Teams Premium and Copilot licenses, meeting type, tenant configuration, supported languages, rollout status, and region. Organizations should evaluate privacy, consent, enrollment, regional requirements, and administrative controls before enabling any of these capabilities.

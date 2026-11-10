@@ -1,0 +1,27 @@
+{
+  "_comment": "Page ranges to ingest per PDF source (1-based PDF page numbers, same as the printed page numbers in both catalogs). Only pages about meeting rooms / conference rooms / hybrid collaboration spaces. Chosen by the ingest agent on 2026-11-10 from the extracted per-page text; `why` is for the human reviewer and is not copied into records. `stage` / `industry` override the source values for that range. Never ingest a whole catalog.",
+  "concept-catalog-2024-25": [
+    { "range": "7-9", "title": "Supercharge collaboration with AI", "stage": "choose_platform", "why": "States 'we'll focus on the use of AI in meeting rooms'; AI meeting features of Google Meet, Webex, Zoom and Copilot in Teams meetings." },
+    { "range": "10", "title": "Choose sustainable technology; simplify tech adoption and management", "stage": "plan_design", "why": "Design considerations 4-5: support options, Symphony, sustainable tech, adoption; points to the meeting room ROI roundtable." },
+    { "range": "15-16", "title": "Create a smart workplace with Microsoft Teams and AI", "stage": "choose_platform", "why": "Teams Rooms + Copilot in hybrid meetings (speaker recognition, IntelliFrame, recap)." },
+    { "range": "17", "title": "Microsoft Places", "stage": "choose_platform", "why": "Room and desk booking with Places and AVI-SPL's Places services (briefing, preparation, pilot)." },
+    { "range": "38", "title": "Hybrid collaboration and learning spaces", "stage": "plan_design", "industry": "higher_education", "why": "Classrooms and hybrid meeting rooms in higher education; names the four UC platforms. Pages 34-37 of the same article (auditoriums, simulation, pilot training) are left out." },
+    { "range": "39-41", "title": "VR Validates AV over IP Solutions at Rose State College", "stage": "proof", "industry": "higher_education", "why": "Case study: classrooms and a lecture hall with Zoom/Teams compatibility, validated with VR room design. Borderline (learning spaces, not corporate meeting rooms); kept because classroom is an in-scope room size." },
+    { "range": "42-44", "title": "4 Essential Use Cases That Enable Proactive IT Management and Planning", "stage": "run_support", "why": "Symphony: monitoring, room sweeps, incident management and analytics for meeting spaces." },
+    { "range": "46-49", "title": "Top Considerations When Choosing a Managed Services Provider", "stage": "run_support", "why": "Managed services for AV/UC rooms: 24/7 support, per-room pricing, Enterprise Managed Services." }
+  ],
+  "concept-catalog-2025-winter": [
+    { "range": "17-18", "title": "How AI will transform collaboration, communication, and engagement", "stage": "plan_design", "why": "Agentic AI for hybrid meetings: meeting analysis, room booking, meeting scheduling and wayfinding, space management. Weakest inclusion (forward-looking); pages 20-21 (corporate video, Google Beam) are left out." },
+    { "range": "22-24", "title": "National Bank of Canada: intuitive and standardized AV/UC tech powers new Montreal HQ vision", "stage": "proof", "industry": "financial_services", "why": "Case study: Microsoft Teams Rooms as the standard meeting space design across forty floors." },
+    { "range": "25-27", "title": "National Bank of Canada: result", "stage": "proof", "industry": "financial_services", "why": "Same case study: 425 conference rooms, Onsite Managed Services and Global Support and Maintenance." },
+    { "range": "28-31", "title": "Seamless global collaboration begins with effective deployment", "stage": "deploy", "why": "Global deployment of AV and UC collaboration systems: repeatable solutions, local procurement, program manager, 24/7 support." },
+    { "range": "65", "title": "Express Install for Microsoft Teams Rooms LG Bundle", "stage": "choose_platform", "why": "LG / Jabra / Salamander Teams Rooms bundle with display sizes and SKUs. A partner advertisement page; kept because it is the same bundle as source #35." }
+  ],
+  "qsys-sustainability-guide": [
+    { "range": "1-3", "title": "The effects of high-impact spaces on sustainability; software's role in reducing your AV carbon footprint", "why": "Conference rooms named among high-impact spaces; Q-SYS remote monitoring and control of AV and room systems." },
+    { "range": "4-5", "title": "Reducing energy usage; data-driven insights; getting started", "why": "Power schedules and occupancy automation in meeting spaces; Q-SYS Reflect + Symphony for meeting room ROI." }
+  ],
+  "lg-express-teams-room-pdf": [
+    { "range": "1-2", "title": "Deploy future-ready meeting spaces with ease", "why": "Whole document (2 pages): LG Express Microsoft Teams Room solution for huddle rooms to larger conference spaces." }
+  ]
+}

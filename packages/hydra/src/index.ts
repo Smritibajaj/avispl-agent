@@ -1,17 +1,11 @@
-import type { KnowledgeStore } from "@avispl/shared";
-
 /**
- * STUB written by the integrator so apps/web can import this name while Agent C builds the real adapter.
- * Agent C: replace this file's body, KEEP the exported name and signature.
+ * @avispl/hydra public surface. apps/web only needs `createHydraKnowledgeStore`.
+ * Everything here is free of node:fs / dotenv so it is safe to import from Next.js server code.
  */
-export interface HydraStoreOptions {
-  /** Default https://api.hydradb.com. Point at the local mock (http://localhost:4010) for offline tests. */
-  baseUrl?: string;
-  apiKey?: string;
-  database?: string;
-  collection?: string;
-}
-
-export function createHydraKnowledgeStore(_opts: HydraStoreOptions = {}): KnowledgeStore {
-  throw new Error("createHydraKnowledgeStore is not implemented yet (Agent C owns packages/hydra).");
-}
+export { createHydraKnowledgeStore, MAIN_QUERY, PER_SOURCE_CAP, DEFAULT_MAX_RESULTS } from "./store";
+export type { HydraStoreOptions, StoreDiagnostic } from "./store";
+export { HydraError, HydraConfigError, HydraValidationError } from "./errors";
+export type { HydraErrorKind } from "./errors";
+export { resolveConfig, DEFAULT_BASE_URL, DEFAULT_COLLECTION, DEV_DATABASE } from "./config";
+export type { HydraConfig } from "./config";
+export { HARD_FILTERS, buildModelFilters, withHardFilters } from "./filters";

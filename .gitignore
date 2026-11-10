@@ -5,6 +5,8 @@ dist/
 .env
 .env.*
 !.env.example
-packages/ingest/data/
+packages/ingest/data/*
+!packages/ingest/data/config/
+!packages/ingest/data/review/
 .vercel/
 *.log

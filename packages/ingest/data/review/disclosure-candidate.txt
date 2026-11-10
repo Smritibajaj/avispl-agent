@@ -1,0 +1,7 @@
+DISCLOSURE CANDIDATE — NOT APPROVED. For Nancy's review only.
+Source: https://microsoft-offers.avispl.com/smart-workplace-with-teams (scraped 2026-11-10T14:50:15.034Z)
+Extracted verbatim from the scraped markdown (markdown formatting may be present).
+After approval, the integrator copies the exact approved text into packages/shared/content/disclosure.txt.
+
+--- candidate 1 (score 6, block #4) ---
+Available features listed below must be enabled by the organization and may depend on Teams Premium and Copilot licenses, meeting type, tenant configuration, supported languages, rollout status, and region. Organizations should evaluate privacy, consent, enrollment, regional requirements, and administrative controls before enabling any of these capabilities.

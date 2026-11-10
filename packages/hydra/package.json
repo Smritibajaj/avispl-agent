@@ -10,7 +10,13 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/**/*.test.ts"
+    "test": "tsx --test \"src/**/*.test.ts\"",
+    "db:create": "tsx src/scripts/db-create.ts",
+    "db:status": "tsx src/scripts/db-status.ts",
+    "ingest": "tsx src/scripts/ingest.ts",
+    "smoke": "tsx src/scripts/smoke.ts",
+    "query:cli": "tsx src/scripts/query-cli.ts",
+    "mock": "tsx src/mock-server/main.ts"
   },
   "dependencies": {
     "@avispl/shared": "workspace:*",

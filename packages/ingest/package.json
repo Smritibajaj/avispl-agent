@@ -5,7 +5,15 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/**/*.test.ts"
+    "test": "tsx --test src/test/*.test.ts",
+    "manifest:report": "tsx src/scripts/manifest-report.ts",
+    "scrape": "tsx src/scrape.ts",
+    "inspect": "tsx src/inspect.ts",
+    "pdf": "tsx src/pdf.ts",
+    "records": "tsx src/prepare.ts",
+    "publish": "tsx src/publish.ts",
+    "tags:explain": "tsx src/scripts/tag-explain.ts",
+    "disclosure:extract": "tsx src/extract-disclosure.ts"
   },
   "dependencies": {
     "@avispl/shared": "workspace:*",

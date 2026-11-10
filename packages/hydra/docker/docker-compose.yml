@@ -1,0 +1,15 @@
+# Offline HydraDB MOCK (plumbing only). Use with HYDRADB_BASE_URL=http://localhost:4010 and any non-empty HYDRADB_API_KEY.
+services:
+  hydradb-mock:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: avispl/hydradb-mock:dev
+    ports:
+      - "4010:4010"
+    environment:
+      MOCK_SEARCH: auto          # auto | fts5 | bm25
+      MOCK_READY_AFTER_MS: "500" # database provisioning delay
+      MOCK_STEP_MS: "300"        # per indexing step: queued -> processing -> graph_creation -> completed
+      MOCK_GRAPH: metadata       # DEMO graph from declared metadata only (relation.context "mock: derived from metadata"); unset = empty graph
+    restart: unless-stopped
