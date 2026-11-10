@@ -1,0 +1,128 @@
+Content to load, organised by the customer’s journey
+
+AVI-SPL’s site is broad (aquariums, museums, video walls, broadcast). For this demo I’d keep the index to the meeting room journey only, so every answer stays on topic.
+
+Plan and design
+
+Reference Designs page and the Reference Designs PDF (mobile collaboration space, small, medium, large, classroom, plus the Logitech sustainability-screened designs)
+Meeting Rooms solution page (the seven design considerations: meeting equity, interoperability, ease of use, AI, sustainability, security, ADA)
+Building a Scalable Model for Meeting Room Standardization eBook
+Avoid the Bowling Alley Effect eBook and Top 5 Hybrid Meeting Hacks
+Concept Catalog, 2025 Winter edition PDF (and the 2024-25 edition, which has the “Immersive Collaboration with Teams Rooms, Copilot and Places” and “5 high-impact design considerations” sections)
+Real-Time Design page (3D visualisation before build)
+
+
+Choose the platform and devices
+
+Microsoft practice pages (/microsoft, /microsoft-teams, Signature Teams Rooms, Experience Tours), the Legrand AV Signature Rooms blog, and the two interactive eBooks HSV built (microsoft-offers.avispl.com and elevate.avispl.com)
+Cisco, Zoom and Google pages
+Partner pages: Crestron, Logitech, Neat, HP Poly, Q-SYS, Shure, Sennheiser, LG
+Future-Ready Meeting Spaces Made Simple and the LG Express Teams Room bundle PDF
+Express Lane to Intelligent Collaboration with Microsoft Teams Rooms (webcast page)
+
+
+Deploy
+
+Professional Services, Global Deployment, Collaboration as a Service
+
+
+Run and support
+
+Symphony page, the Symphony user documentation (symphony.knowledgeowl.com), and the Meeting Room ROI blog
+Managed Services, Support and Maintenance, Help Desk page
+
+
+Proof
+
+Case studies with a meeting room story: IDRC (Teams Premium and Places), Global Technology Security Leader, CBRE Berlin, How One Financial Institution Transformed Collaboration, National Bank of Canada, Carrollton Bank, Truepoint, 7-Eleven, Tampa SkyCenter One, Bernalillo County (managed services)
+Industry pages for financial services, legal, healthcare and higher education, so answers can take a vertical angle
+
+
+Three queries to show Nancy:
+
+Each one is written the way a customer would actually type it, and each one exercises a different thing the tool does.
+1. “We have about 40 meeting rooms across three offices, all on Microsoft Teams. Which AVI-SPL reference designs should we standardise on for small, medium and large rooms, and what should we think about for remote participants?”
+
+This pulls the reference designs, the standardisation eBook and the meeting equity guidance into one answer with citations. It shows synthesis across documents, which is the thing a site search cannot do.
+2. “What do we need in place to use Copilot and Microsoft Places in our Teams Rooms, and has AVI-SPL done this for an organisation like ours?”
+
+This pulls the Microsoft practice pages, the smart workplace eBook and the IDRC case study. It shows that the tool surfaces proof, not just product pages, and that it carries the licensing disclosure Nancy fought to get into the eBook.
+3. “Once the rooms are installed, how do we monitor them, and what happens if a room fails ten minutes before a board meeting?”
+
+This pulls Symphony, support and maintenance, managed services and the Bernalillo County case study. It shows the tool covers the part of the journey where customers usually go quiet, and it sets up the managed services upsell AVI-SPL’s sales team wants.
+
+ Plan and design
+
+Reference Designs page: https://avispl.com/solutions/reference-designs/
+Reference Designs PDF (2021 edition, the only standalone PDF I found, worth asking Nancy for the current one): https://avispl.com/wp-content/uploads/2021/04/Reference_Designs.pdf
+Sustainability-screened meeting rooms (Logitech): https://avispl.com/solutions/reference-designs/sustainability-screened-meeting-rooms/
+Meeting Rooms solution page: https://avispl.com/solutions/meeting-rooms/
+Building a Scalable Model for Meeting Room Standardization eBook: https://avispl.com/resource/scalable-meeting-room-standardization/
+Avoid the Bowling Alley Effect eBook: https://pages.avispl.com/hubfs/2023/2023%20PDFs/AVI-SPL%20Avoid%20the%20Bowling%20Alley%20Effect%20…
+Top 5 Hybrid Meeting Hacks: https://pages.avispl.com/hubfs/2023/2023%20PDFs/AVI-SPL%20Top%205%20Hybrid%20Meeting%20Hacks%20(1).…
+Concept Catalog landing page: https://avispl.com/resource/concept-catalog/
+Concept Catalog 2025 Winter PDF: https://pages.avispl.com/hubfs/2025/2025%20pdf%20assets/2025%20Concept%20Catalog/AVI-SPL%202025%20W…
+Concept Catalog 2024-2025 Winter PDF: https://pages.avispl.com/hubfs/2024/2024%20PDFs/Concept%20Catalog%202024-2025%20Winter%20update.pdf
+Q-SYS Sustainability Guide: https://pages.avispl.com/hubfs/2024/2024%20PDFs/AVI-SPL%20Q-SYS%20Sustainability%20Guide.12.24.pdf
+Real-Time Design: https://avispl.com/services/real-time-design/
+
+
+Choose the platform and devices
+
+Microsoft practice: https://avispl.com/microsoft/
+Microsoft Teams and Teams Rooms: https://avispl.com/microsoft-teams
+Microsoft Teams Services: https://avispl.com/microsoft-teams-services/
+Signature Teams Room Experience Tours: https://avispl.com/microsoft-teams-room-experience-tours/
+Scalable Signature Teams Rooms with Legrand AV (blog): https://avispl.com/blog/scalable-signature-teams-rooms-with-legrand-av/
+Why Microsoft Places is a workplace management gamechanger (blog): https://avispl.com/blog/why-microsoft-places-is-a-workplace-management-gamechanger/
+Smart Workplace Microsoft Teams interactive eBook (landing page): https://avispl.com/resource/smart-workplace-microsoft-teams-interactive-ebook/
+The interactive eBook itself (HSV-built): https://microsoft-offers.avispl.com/smart-workplace-with-teams and https://microsoft-offers.avispl.com/evolution-of-work
+Elevate interactive eBook (HSV-built): https://elevate.avispl.com/
+Cisco: https://avispl.com/cisco/
+Zoom: https://avispl.com/zoom/
+Google Meet: https://avispl.com/google/
+Crestron: https://avispl.com/crestron/
+Logitech: https://avispl.com/logitech/
+Neat: https://avispl.com/neat/
+HP Poly: https://avispl.com/hp-poly/
+Q-SYS: https://avispl.com/q-sys/
+Shure: https://avispl.com/shure/
+Sennheiser: https://avispl.com/sennheiser/
+LG: https://avispl.com/lg/
+Future-Ready Meeting Spaces Made Simple: https://avispl.com/resource/future-ready-meeting-spaces-made-simple/
+LG Express Teams Room bundle PDF: https://pages.avispl.com/hubfs/2025/2025%20pdf%20assets/AVI-SPL%20LG%20Deploy%20Future-Ready%20Meet…
+Express Lane to Intelligent Collaboration with Microsoft Teams Rooms: https://avispl.com/resource/express-lane-intelligent-collaboration-microsoft-teams-rooms/
+
+
+Deploy
+
+Professional Services: https://avispl.com/services/professional-services/
+Global Deployment: https://avispl.com/services/global-deployment/
+Collaboration as a Service: https://avispl.com/services/collaboration-as-a-service/
+
+
+Run and support
+
+Symphony: https://avispl.com/symphony/
+Symphony user documentation: https://symphony.knowledgeowl.com/help/documentation
+How to Go Beyond Traditional Meeting Room ROI Calculations (blog): https://avispl.com/blog/beyond-traditional-meeting-room-roi-calculations/
+Managed Services: https://avispl.com/services/managed-services/
+Support and Maintenance: https://avispl.com/services/support-and-maintenance/
+Help Desk: https://avispl.service-now.com/support
+
+
+Proof
+
+Case studies index: https://avispl.com/resources/case-studies/
+IDRC: https://avispl.com/resources/case-studies/idrc-case-study/
+Global Technology Security Leader: https://avispl.com/resources/case-studies/global-technology-security-leader/
+CBRE Berlin: https://avispl.com/resources/case-studies/cbre-berlin-case-study/
+How One Financial Institution Transformed Collaboration: https://avispl.com/resources/case-studies/how-one-financial-institution-transformed-collaboration/
+National Bank of Canada: https://avispl.com/resources/case-studies/national-bank-of-canada-case-study/
+Carrollton Bank: https://avispl.com/resources/case-studies/carrollton-bank-case-study/
+Truepoint: https://avispl.com/resources/case-studies/truepoint/
+7-Eleven: https://avispl.com/resources/case-studies/7-eleven/
+Tampa International Airport SkyCenter One: https://avispl.com/resources/case-studies/tampa-international-airport-skycenter-one/
+Bernalillo County (managed services): https://avispl.com/resources/case-studies/bernalillo-county/
+Industries: https://avispl.com/industries/financial-services/ , https://avispl.com/industries/legal/ , https://avispl.com/industries/healthcare/ , https://avispl.com/industries/higher-education/
+[10:12 PM]We need to create a chat agent by putting the relevant context from these links into HydraDB.
