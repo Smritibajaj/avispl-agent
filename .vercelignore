@@ -1,0 +1,12 @@
+# Keep uploads small and free of local data. Vercel builds from source.
+node_modules
+.turbo
+.next
+.env
+.env.*
+!.env.example
+*.log
+packages/ingest/data
+packages/hydra/reports
+packages/hydra/smoke-results
+.claude
