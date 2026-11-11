@@ -8,11 +8,11 @@ apps/web            Next.js chat UI + AI SDK agent (consumer of KnowledgeStore) 
 packages/ingest     manifest, Firecrawl scrape, clean, records.jsonl                   -> Agent B
 packages/hydra      HydraDB setup + ingest + HydraKnowledgeStore (provider)            -> Agent C
 packages/shared     contract: vocab, metadata schema, KnowledgeStore, records          -> integrator only
-docs/               DECISIONS.md (verified facts), plan.original.md, source-brief.txt
+docs/               DECISIONS.md (verified facts), HYDRADB_SCHEMA.md (database fields and queries), plan.original.md, source-brief.txt
 ```
 
 Data flow: `ingest` writes `packages/ingest/data/records.jsonl` (type `IngestRecord`) -> `hydra` creates the database, ingests the records, serves queries -> `web` calls `KnowledgeStore.search()`.
-`KNOWLEDGE_BACKEND=mock` lets the UI run with no keys.
+The app always reads HydraDB: set `HYDRADB_API_KEY` and a model key in `.env` (there is no mock backend or demo model since the 2026-11-11 clean-up).
 
 ## Commands
 

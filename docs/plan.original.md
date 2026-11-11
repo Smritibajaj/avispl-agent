@@ -6,7 +6,7 @@
 
 Build a customer-facing AVI-SPL meeting-room-journey chat agent. Restrict knowledge to meeting-room-related AVI-SPL material, not the wider site (aquariums, museums, broadcast, etc.). Answers must synthesize multiple sources, show precise clickable citations, surface verified customer proof, respect licensing disclosures and service limitations, and guide users to an appropriate next action.
 
-**Demo stakeholder:** Nancy. **Key reason to use HydraDB:** demonstrate a **context/knowledge graph**, not only a document search index. **Implementation assistant:** Claude Code.
+**Demo stakeholder:** AVI-SPL content owner. **Key reason to use HydraDB:** demonstrate a **context/knowledge graph**, not only a document search index. **Implementation assistant:** Claude Code.
 
 ## 1. Three golden demo queries (verbatim)
 
@@ -18,7 +18,7 @@ Must synthesize reference designs + standardisation eBook + meeting equity guida
 **Q2 — Copilot, Places, proof:**
 > What do we need in place to use Copilot and Microsoft Places in our Teams Rooms, and has AVI-SPL done this for an organisation like ours?
 
-Must synthesize Microsoft practice pages + Smart Workplace interactive eBook + IDRC case study. **Exact approved licensing disclosure that Nancy fought to include is critical**; retrieve and verify it, never invent it. Do not conflate mentioning Copilot with proof of a Copilot deployment.
+Must synthesize Microsoft practice pages + Smart Workplace interactive eBook + IDRC case study. **Exact approved licensing disclosure that the content owner fought to include is critical**; retrieve and verify it, never invent it. Do not conflate mentioning Copilot with proof of a Copilot deployment.
 
 **Q3 — Post-install monitoring and emergency:**
 > Once the rooms are installed, how do we monitor them, and what happens if a room fails ten minutes before a board meeting?
@@ -50,7 +50,7 @@ All URLs below were provided by the user. Some are **truncated with an ellipsis*
 ### 3.1 Plan and design
 
 1. Reference Designs page — https://avispl.com/solutions/reference-designs/
-2. Reference Designs PDF (2021, historical; request current version from Nancy) — https://avispl.com/wp-content/uploads/2021/04/Reference_Designs.pdf
+2. Reference Designs PDF (2021, historical; request current version from the content owner) — https://avispl.com/wp-content/uploads/2021/04/Reference_Designs.pdf
 3. Sustainability-screened meeting rooms (Logitech) — https://avispl.com/solutions/reference-designs/sustainability-screened-meeting-rooms/
 4. Meeting Rooms solution page (meeting equity, interoperability, ease of use, AI, sustainability, security, ADA) — https://avispl.com/solutions/meeting-rooms/
 5. Building a Scalable Model for Meeting Room Standardization eBook — https://avispl.com/resource/scalable-meeting-room-standardization/
@@ -295,7 +295,7 @@ For each golden query, first define evidence coverage targets. If retrieval miss
 - [ ] Missing or conflicting evidence produces qualified answers
 - [ ] HydraDB graph is visible and useful for retrieval, not just decoration
 
-**Ask Nancy/team:** Is the 2021 PDF superseded? What exact licensing disclosure is approved? Which CTAs should the agent offer (design consultation, sales, support)? What does the graph demo need to show? What is the HydraDB credit/budget limit?
+**Ask the content owner/team:** Is the 2021 PDF superseded? What exact licensing disclosure is approved? Which CTAs should the agent offer (design consultation, sales, support)? What does the graph demo need to show? What is the HydraDB credit/budget limit?
 
 ## 8. Step-by-step Firecrawl → HydraDB ingestion pipeline
 
@@ -457,7 +457,7 @@ Once the small batch passes, ingest the remaining valid URLs. Record success/par
 7. Use evidence-backed graph edges, not hallucinated LLM relationships.
 8. Prefer P0-first end-to-end vertical slice before all 60 sources.
 9. Preserve exact source URLs and citations, and log redirects.
-10. Ask the user for missing keys, approval to spend credits, current design PDF and Nancy-approved licensing disclosure when necessary.
+10. Ask the user for missing keys, approval to spend credits, current design PDF and owner-approved licensing disclosure when necessary.
 
 ## 11. Suggested first Claude Code prompt
 

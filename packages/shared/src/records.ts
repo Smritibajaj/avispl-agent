@@ -9,9 +9,9 @@ export type SourceStatus =
   | "ready" // reachable, public, meeting-room content
   | "partial_scope" // reachable but only some sections are meeting-room relevant
   | "page_ranges_needed" // big PDF: only selected page ranges are in scope
-  | "needs_resolution" // URL truncated in the brief: resolve via landing page or ask Nancy. NEVER guess.
+  | "needs_resolution" // URL truncated in the brief: resolve via landing page or ask the content owner. NEVER guess.
   | "dead_link" // 404
-  | "gated" // behind a form: needs the file from Nancy
+  | "gated" // behind a form: needs the file from the content owner
   | "login_required" // behind a login: needs an export from AVI-SPL, never scrape
   | "off_scope"; // reachable but not a meeting-room story
 

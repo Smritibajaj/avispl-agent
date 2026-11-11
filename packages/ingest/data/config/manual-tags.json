@@ -1,5 +1,5 @@
 {
-  "_note": "Room-size tags added by hand (owner request 2026-11-11) where a record describes a room or product for a room size without using the words the tagger looks for. Tags only steer search filters: they are never shown or stated to the customer. Keyed by record id; added to whatever the tagger found.",
+  "_note": "Room-size (and, where noted, platform or vendor) tags added by hand (owner request 2026-11-11) where a record describes a room or product for a room size without using the words the tagger looks for. Tags only steer search filters: they are never shown or stated to the customer. Keyed by record id; added to whatever the tagger found.",
   "tags": {
     "98533225eab104f8ef0e401ab27b474576da9c35": {
       "room_sizes": [
@@ -13,8 +13,12 @@
       "room_sizes": [
         "medium"
       ],
-      "why": "Team meeting room design built around a Logitech Rally Bar",
-      "record": "Sustainability Screened Meeting Rooms › Team Meeting Room Reference Design"
+      "why": "Team meeting room design built around a Logitech Rally Bar. Platforms added by hand (owner request 2026-11-11): the bundle uses Logitech Tap, Rally Bar and Lenovo ThinkSmart compute, which run Microsoft Teams Rooms or Zoom Rooms; the page itself names no platform",
+      "record": "Sustainability Screened Meeting Rooms › Team Meeting Room Reference Design",
+      "platforms": [
+        "microsoft",
+        "zoom"
+      ]
     },
     "b98cd48a593520897d691c687ecae89dedcb3671": {
       "room_sizes": [

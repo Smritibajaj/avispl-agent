@@ -1,7 +1,7 @@
 {
   "$schema": "https://turborepo.com/schema.json",
   "globalPassThroughEnv": [
-    "KNOWLEDGE_BACKEND",
+    "HYDRADB_CLIENTS_DATABASE",
     "HYDRADB_API_KEY",
     "HYDRADB_BASE_URL",
     "HYDRADB_DATABASE",

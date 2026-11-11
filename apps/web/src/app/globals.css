@@ -283,3 +283,69 @@ h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
   .kg-detail { position: static; max-height: none; }
 }
 @media (prefers-reduced-motion: reduce) { .kg-edge, .kg-node { transition: none; } }
+
+/* Quick-reply choices under an assistant question */
+.choices { margin-top: 12px; display: flex; flex-direction: column; gap: 8px; }
+.choices-label { font-size: 12px; font-weight: 600; letter-spacing: 0.02em; text-transform: uppercase; color: var(--muted); }
+.choices-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.choice { font: inherit; font-size: 14px; line-height: 1.2; padding: 9px 14px; border-radius: 999px; border: 1px solid var(--tint-line); background: var(--card); color: var(--text); cursor: pointer; transition: background 0.12s, border-color 0.12s; }
+.choice:hover { background: var(--tint); border-color: var(--accent); }
+.choice:focus-visible, .choices-send:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.choice.is-picked { background: var(--accent); border-color: var(--accent); color: #fff; }
+.choices-send { align-self: flex-start; font: inherit; font-size: 14px; font-weight: 600; padding: 9px 18px; border-radius: 999px; border: 0; background: var(--send-bg); color: var(--send-text); cursor: pointer; }
+.choices-send:disabled { opacity: 0.45; cursor: not-allowed; }
+.choices-hint { font-size: 12px; color: var(--muted); }
+
+/* Book a meeting */
+.book { margin-top: 14px; }
+.book-btn { font: inherit; font-size: 15px; font-weight: 600; padding: 11px 20px; border-radius: 999px; border: 0; background: var(--send-bg); color: var(--send-text); cursor: pointer; }
+.book-btn:disabled { opacity: 0.6; cursor: wait; }
+.book-btn:focus-visible, .book-cancel:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.book-form { display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 1px solid var(--tint-line); border-radius: var(--radius); background: var(--card); max-width: 460px; }
+.book-title { font-weight: 600; color: var(--heading); }
+.book-form label { display: flex; flex-direction: column; gap: 4px; font-size: 13px; color: var(--muted); }
+.book-form input, .book-form textarea { font: inherit; font-size: 15px; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.book-form input:focus-visible, .book-form textarea:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.book-opt { opacity: 0.7; }
+.book-actions { display: flex; gap: 12px; align-items: center; }
+.book-cancel { font: inherit; font-size: 14px; background: none; border: 0; color: var(--muted); cursor: pointer; text-decoration: underline; }
+.book-error { font-size: 13px; color: var(--error-text); background: var(--error-bg); border: 1px solid var(--error-line); border-radius: 8px; padding: 8px 10px; }
+.book-done { padding: 12px 14px; border-radius: var(--radius); background: var(--tint); border: 1px solid var(--tint-line); color: var(--tint-text); }
+
+/* HydraDB graph page */
+.hg { max-width: 1240px; margin: 0 auto; padding: 24px 20px 48px; color: var(--text); }
+.hg-head { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.hg h1 { margin: 0 0 6px; font-family: var(--font-heading); color: var(--heading); font-size: 26px; }
+.hg-sub { margin: 0; max-width: 62ch; color: var(--muted); font-size: 15px; line-height: 1.5; }
+.hg-nav { display: flex; gap: 16px; font-size: 14px; } .hg-nav a { color: var(--accent); }
+.hg-form { display: flex; gap: 10px; margin: 20px 0 10px; flex-wrap: wrap; }
+.hg-form input { flex: 1 1 320px; font: inherit; font-size: 15px; padding: 11px 14px; border-radius: 10px; border: 1px solid var(--line); background: var(--bg); color: var(--text); }
+.hg-form button { font: inherit; font-weight: 600; font-size: 15px; padding: 11px 20px; border-radius: 999px; border: 0; background: var(--send-bg); color: var(--send-text); cursor: pointer; }
+.hg-form button:disabled, .hg-examples .choice:disabled { opacity: 0.5; cursor: not-allowed; }
+.hg-examples { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.hg-banner { display: inline-block; margin-bottom: 12px; }
+.hg-empty { color: var(--muted); }
+.hg-body { display: grid; grid-template-columns: minmax(0, 1.7fr) minmax(280px, 1fr); gap: 20px; align-items: start; }
+@media (max-width: 900px) { .hg-body { grid-template-columns: 1fr; } }
+.hg-canvas { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 8px; }
+.hg-canvas svg { width: 100%; height: auto; display: block; }
+.hg-node { cursor: pointer; outline: none; } .hg-node:focus-visible circle { stroke: var(--accent); stroke-width: 4; }
+.hg-node-label { font-size: 13px; fill: var(--text); paint-order: stroke; stroke: var(--card); stroke-width: 3px; }
+.hg-edge-label { font-size: 12px; fill: var(--muted); paint-order: stroke; stroke: var(--card); stroke-width: 3px; }
+.hg-legend { display: flex; flex-wrap: wrap; gap: 14px; padding: 6px 8px 2px; font-size: 12px; color: var(--muted); }
+.hg-key i { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 6px; }
+.hg-panel { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card); padding: 14px 16px; max-height: 640px; overflow: auto; }
+.hg-panel h2 { margin: 0 0 10px; font-size: 16px; color: var(--heading); display: flex; justify-content: space-between; gap: 8px; align-items: baseline; }
+.hg-rels { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.hg-rel { font: inherit; font-size: 14px; text-align: left; background: none; border: 0; padding: 0; color: var(--text); cursor: pointer; line-height: 1.4; }
+.hg-rel em { color: var(--accent); font-style: normal; }
+.hg-ctx { margin: 4px 0 0; font-size: 13px; color: var(--muted); line-height: 1.45; }
+.hg-src { display: block; margin-top: 3px; font-size: 12px; }
+.hg-note { margin: 14px 0 0; font-size: 12px; color: var(--muted); }
+
+/* Links to the cited AVI-SPL pages under an answer */
+.proof-links { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 0.9rem; }
+.proof-links-title { display: block; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+.proof-links ul { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 3px; }
+.proof-links a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.book-note { margin: 0; font-size: 0.8rem; color: var(--muted); }

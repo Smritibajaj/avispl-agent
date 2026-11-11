@@ -1,7 +1,7 @@
 import type { JourneyStage } from "@avispl/shared";
 
 /**
- * TODO(Nancy): confirm the next-step wording and the destination link for each journey stage.
+ * TODO(the content owner): confirm the next-step wording and the destination link for each journey stage.
  * Until then every CTA links to the AVI-SPL home page (no guessed deep links).
  */
 export interface Cta {
@@ -14,7 +14,7 @@ export const CTA_DEFAULT: Cta = {
   href: "https://avispl.com",
 };
 
-/** Contextual CTA, chosen from the journey stage that dominates an answer's citations. TODO(Nancy). */
+/** Contextual CTA, chosen from the journey stage that dominates an answer's citations. TODO(the content owner). */
 export const CTA_BY_STAGE: Partial<Record<JourneyStage, Cta>> = {
   plan_design: { text: "Talk to an AVI-SPL expert about your room designs", href: "https://avispl.com" },
   choose_platform: { text: "Talk to an AVI-SPL expert about your platform choice", href: "https://avispl.com" },

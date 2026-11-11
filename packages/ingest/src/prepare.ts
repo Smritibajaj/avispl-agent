@@ -21,7 +21,7 @@ import {
 import { MIN_SUBSTANTIVE_WORDS, chunkSections, clipName, isLinkOnly, isThin, parseSections, substantiveWords, stableId, withBreadcrumb, type Chunk, type SplitEvent } from "./split";
 import { applyRelations } from "./relations";
 import { TAG_FIELDS, detectIndustry, detectStage, tagInputFromBody, tagRecord, type RecordTags } from "./tagger";
-import { ROOM_SIZES, splitList } from "@avispl/shared";
+import { PLATFORMS, ROOM_SIZES, VENDORS, splitList } from "@avispl/shared";
 import type { PdfExtract } from "./pdf";
 import { CONFIG_DIR, DATA_DIR, PDF_DIR, RAW_DIR, REPORTS_DIR, REVIEW_DIR } from "./paths";
 import { PREP, prepRaw } from "./new-prep";
@@ -89,21 +89,30 @@ export function stageForRecord(m: Pick<MetaInput, "source" | "stage" | "body" | 
 }
 
 /**
- * Room-size tags added by hand in data/config/manual-tags.json (keyed by record id), merged with what the tagger
- * found. They steer search filters only; the record text is untouched. An id that no longer exists is ignored.
+ * Tags added by hand in data/config/manual-tags.json (keyed by record id), merged with what the tagger found:
+ * room_sizes, platforms and vendors. They steer search filters only; the record text is untouched. Values outside
+ * the vocab are dropped. An id that no longer exists is ignored.
  */
 export async function applyManualTags(records: IngestRecord[]): Promise<number> {
   const file = join(CONFIG_DIR, "manual-tags.json");
   if (!existsSync(file)) return 0;
-  const { tags } = JSON.parse(await readFile(file, "utf8")) as { tags: Record<string, { room_sizes?: string[] }> };
+  type Manual = { room_sizes?: string[]; platforms?: string[]; vendors?: string[] };
+  const { tags } = JSON.parse(await readFile(file, "utf8")) as { tags: Record<string, Manual> };
+  const fields = [["room_sizes", ROOM_SIZES], ["platforms", PLATFORMS], ["vendors", VENDORS]] as const;
   let n = 0;
   for (const r of records) {
-    const add = tags[r.id]?.room_sizes;
-    if (!add?.length) continue;
-    const have = new Set([...splitList(r.metadata.room_sizes), ...add]);
-    const merged = ROOM_SIZES.filter((v) => have.has(v)).join(",");
-    if (merged !== r.metadata.room_sizes) n++;
-    r.metadata.room_sizes = merged;
+    const manual = tags[r.id];
+    if (!manual) continue;
+    let changed = false;
+    for (const [field, vocab] of fields) {
+      const add = manual[field];
+      if (!add?.length) continue;
+      const have = new Set([...splitList(r.metadata[field]), ...add]);
+      const merged = (vocab as readonly string[]).filter((v) => have.has(v)).join(",");
+      if (merged !== r.metadata[field]) changed = true;
+      r.metadata[field] = merged;
+    }
+    if (changed) n++;
   }
   return n;
 }

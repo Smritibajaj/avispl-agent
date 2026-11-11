@@ -9,3 +9,5 @@ export type { HydraErrorKind } from "./errors";
 export { resolveConfig, DEFAULT_BASE_URL, DEFAULT_COLLECTION, DEV_DATABASE } from "./config";
 export type { HydraConfig } from "./config";
 export { HARD_FILTERS, buildModelFilters, withHardFilters } from "./filters";
+export { saveClientProfile, clientProfileFields, clientProfileId, CLIENT_PROFILES_COLLECTION, CLIENTS_DEV_DATABASE } from "./client-profiles";
+export type { ClientProfile } from "./client-profiles";

@@ -1,7 +1,6 @@
 import { isDisclosurePending } from "@avispl/shared";
-import { readDisclosureText } from "../../../lib/disclosure";
+import { readDisclosureText } from "../../../lib/licensing/disclosure";
 import { modelKeyConfigured, resolveModelMode } from "../../../lib/env";
-import { backendName, backendTarget } from "../../../lib/knowledge";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -11,13 +10,13 @@ export async function GET(): Promise<Response> {
   const mode = resolveModelMode();
   return Response.json({
     ok: true,
-    backend: backendName(),
-    backendTarget: backendTarget(),
+    backend: "hydra",
+    database: process.env.HYDRADB_DATABASE?.trim() || "not set",
+    hydraKeyConfigured: !!process.env.HYDRADB_API_KEY?.trim(),
     disclosure: text === undefined ? "missing" : isDisclosurePending(text) ? "pending" : "approved",
     disclosurePending: text === undefined || isDisclosurePending(text),
     model: mode.id,
     modelMode: mode.kind,
-    ...(mode.kind === "demo" ? { demoReason: mode.reason } : {}),
     ...("note" in mode && mode.note ? { modelNote: mode.note } : {}),
     modelKeyConfigured: modelKeyConfigured(),
   });

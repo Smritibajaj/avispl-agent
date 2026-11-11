@@ -129,6 +129,7 @@ export const VENDOR_RULES: Rule<Vendor>[] = [
   { tag: "sennheiser", any: [/\bSennheiser\b/i] },
   { tag: "lg", any: [/\bLG\b/] },
   { tag: "legrand", any: [/\bLegrand\b/i] },
+  { tag: "sony", any: [/\bSony\b/i, /\bBRAVIA\b/i] },
 ];
 
 export const TOPIC_RULES: Rule<Topic>[] = [

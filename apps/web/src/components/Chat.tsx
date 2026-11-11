@@ -3,9 +3,11 @@
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { GOLDEN_QUERIES } from "../lib/golden-queries";
-import { extractEvidence } from "../lib/message-evidence";
-import type { ChatMessage } from "../lib/tools";
+import { GOLDEN_QUERIES } from "../lib/agent/golden-queries";
+import { parseChoices } from "../lib/chat/choices";
+import { intakeAnswers } from "../lib/booking/client-profile";
+import { extractEvidence } from "../lib/chat/message-evidence";
+import type { ChatMessage } from "../lib/agent/tools";
 import { AssistantMessage } from "./AssistantMessage";
 import { Working } from "./Working";
 
@@ -15,7 +17,7 @@ const CHIP_LABELS = ["Standardise 40 Teams rooms", "Copilot and Places: what and
 
 type Theme = "light" | "dark";
 
-/** One saved conversation. Kept in this browser only (localStorage); nothing is sent to a server. */
+/** One saved conversation, kept in this browser (localStorage). The answers given are also saved for the AVI-SPL team when a plan is delivered or a meeting is requested. */
 interface SavedChat {
   id: string;
   title: string;
@@ -75,14 +77,7 @@ const ICON = {
   down: "M12 5v14M5 12l7 7 7-7",
 };
 
-export function Chat({
-  target,
-  modelMode,
-}: {
-  backend: string;
-  target: "fixtures" | "offline-mock" | "hosted";
-  modelMode: "anthropic" | "gateway" | "demo" | "unconfigured";
-}) {
+export function Chat({ modelMode }: { modelMode: "anthropic" | "gateway" | "unconfigured" }) {
   const [input, setInput] = useState("");
   const [theme, setTheme] = useState<Theme>("light");
   const [sidebarOpen, setSidebarOpen] = useState(true); // desktop
@@ -96,6 +91,8 @@ export function Chat({
   const endRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const busy = status === "submitted" || status === "streaming";
+  /** Assistant messages whose client profile was already sent (or that came from a reopened chat). */
+  const savedFor = useRef(new Set<string>());
 
   // Theme: the inline script in layout.tsx sets <html data-theme> before paint; mirror it here.
   useEffect(() => {
@@ -155,6 +152,7 @@ export function Chat({
   const openChat = (c: SavedChat) => {
     void stop();
     clearError();
+    for (const m of c.messages) savedFor.current.add(m.id); // reopening an old chat does not save it again
     setMessages(c.messages);
     setChatId(c.id);
     setDrawerOpen(false);
@@ -193,6 +191,28 @@ export function Chat({
     if (window.matchMedia("(max-width: 800px)").matches) setDrawerOpen((o) => !o);
     else setSidebarOpen((o) => !o);
   };
+
+  // The customer's own messages, sent along with a meeting request so the team knows the context.
+  const bookingSummary = messages.filter((m) => m.role === "user").map(userText).join(" | ").slice(0, 900);
+  const answers = useMemo(
+    () => intakeAnswers(messages.map((m) => ({ role: m.role, text: m.role === "user" ? userText(m) : (evidence.get(m.id)?.text ?? "") }))),
+    [messages, evidence],
+  );
+
+  // When the advisor delivers a plan (its answer carries the booking button), save what the customer told it.
+  useEffect(() => {
+    const last = messages[messages.length - 1];
+    if (busy || !last || last.role !== "assistant" || savedFor.current.has(last.id) || answers.length === 0) return;
+    if (!parseChoices(evidence.get(last.id)?.text ?? "").book) return;
+    savedFor.current.add(last.id);
+    void fetch("/api/client-profile", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ chatId, answers }),
+    }).catch(() => {
+      /* saving the profile is best effort: the chat carries on */
+    });
+  }, [busy, messages, evidence, answers, chatId]);
 
   const keyMissing = modelMode === "unconfigured";
   const empty = messages.length === 0;
@@ -246,7 +266,7 @@ export function Chat({
               </button>
             </div>
           ))}
-          {chats.length === 0 && <p className="side-empty">Your chats will appear here. They are saved in this browser only.</p>}
+          {chats.length === 0 && <p className="side-empty">Your chats will appear here, saved in this browser.</p>}
         </div>
 
         <button type="button" className="side-item side-theme" onClick={toggleTheme}>
@@ -278,28 +298,11 @@ export function Chat({
           </button>
         </header>
 
-        {(target !== "hosted" || modelMode === "demo" || keyMissing) && (
+        {keyMissing && (
           <div className="status-strip" role="status">
-            {target === "fixtures" && (
-              <span className="status-pill status-mock">
-                <strong>MOCK DATA</strong> synthetic demo fixtures, not AVI-SPL content
-              </span>
-            )}
-            {target === "offline-mock" && (
-              <span className="status-pill status-mock">
-                <strong>OFFLINE MOCK</strong> local HydraDB mock: keyword search only
-              </span>
-            )}
-            {modelMode === "demo" && (
-              <span className="status-pill status-demo">
-                <strong>DEMO MODEL</strong> answers are assembled from retrieved text, not AI
-              </span>
-            )}
-            {keyMissing && (
-              <span className="status-pill status-key">
-                <strong>NO MODEL KEY</strong> set <code>ANTHROPIC_API_KEY</code> in <code>.env</code>, or <code>CHAT_MODEL=demo</code>
-              </span>
-            )}
+            <span className="status-pill status-key">
+              <strong>NO MODEL KEY</strong> set <code>ANTHROPIC_API_KEY</code> in <code>.env</code>
+            </span>
           </div>
         )}
 
@@ -335,7 +338,8 @@ export function Chat({
                   }
                   const ev = evidence.get(m.id);
                   if (!ev) return null;
-                  return <AssistantMessage key={m.id} ev={ev} streaming={busy && idx === messages.length - 1} />;
+                  const isLast = idx === messages.length - 1;
+                  return <AssistantMessage key={m.id} ev={ev} streaming={busy && isLast} onChoose={isLast && !busy ? send : undefined} booking={isLast ? { summary: bookingSummary, chatId, answers } : undefined} />;
                 })}
 
                 {status === "submitted" && messages[messages.length - 1]?.role === "user" && (

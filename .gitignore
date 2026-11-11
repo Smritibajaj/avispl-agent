@@ -8,5 +8,17 @@ dist/
 packages/ingest/data/*
 !packages/ingest/data/config/
 !packages/ingest/data/review/
+# What the HydraDB knowledge database is built from: keep it in git so the database can be rebuilt.
+!packages/ingest/data/records.jsonl
+!packages/ingest/data/raw/
+!packages/ingest/data/pdf/
 .vercel/
 *.log
+# Local tool and OS files
+.claude/worktrees/
+.DS_Store
+*.tsbuildinfo
+next-env.d.ts
+# This repo uses pnpm (pnpm-lock.yaml): no npm or yarn lockfiles
+package-lock.json
+yarn.lock

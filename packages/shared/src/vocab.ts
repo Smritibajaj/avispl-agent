@@ -44,6 +44,7 @@ export const VENDORS = [
   "sennheiser",
   "lg",
   "legrand",
+  "sony",
 ] as const;
 export type Vendor = (typeof VENDORS)[number];
 

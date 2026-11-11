@@ -17,7 +17,8 @@
     "smoke": "tsx src/scripts/smoke.ts",
     "query:cli": "tsx src/scripts/query-cli.ts",
     "delete-stale": "tsx src/scripts/delete-stale.ts",
-    "mock": "tsx src/mock-server/main.ts"
+    "clients:create": "tsx src/scripts/clients-create.ts",
+    "clients:delete": "tsx src/scripts/clients-delete.ts"
   },
   "dependencies": {
     "@avispl/shared": "workspace:*",

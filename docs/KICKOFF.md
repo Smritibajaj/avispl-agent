@@ -31,20 +31,20 @@ or anything that spends money.
 2. `pnpm ingest manifest:report`, then review `packages/ingest/data/reports/prepare-report.md` and the P0 extraction quality.
 3. Read hydra-agent's findings in `docs/DECISIONS.md` section 5. Decide whether `contains` semantics, chunk metadata and graph output match what the store and UI assume. Fix the store, not the data, if they differ.
 4. Review a few records in `records.jsonl`, flip the good ones to `published` (`pnpm ingest publish --source <id>`), then `pnpm hydra ingest` into the DEV database. Wait for `completed`.
-5. `KNOWLEDGE_BACKEND=hydra pnpm dev`, ask the three golden queries (the suggestion chips). Check: citations are real and clickable; Q1 returns small/medium/large evidence plus meeting-equity guidance; Q2 shows Copilot/Places prerequisites and cites IDRC only for what it deployed, with the disclosure either verbatim (approved) or the pending message; Q3 explains monitoring and escalation with no repair-time promise; the graph panel shows real triplets that click through to evidence. Compare with and without graph context to see whether the graph adds value.
+5. `pnpm dev`, ask the three golden queries (the suggestion chips). Check: citations are real and clickable; Q1 returns small/medium/large evidence plus meeting-equity guidance; Q2 shows Copilot/Places prerequisites and cites IDRC only for what it deployed, with the disclosure either verbatim (approved) or the pending message; Q3 explains monitoring and escalation with no repair-time promise; the graph panel shows real triplets that click through to evidence. Compare with and without graph context to see whether the graph adds value.
 6. Negative tests: an aquarium question, a price question, an SLA question, and a prompt injection in retrieved text must all be handled politely and truthfully.
-7. Send Nancy the open items: current Reference Designs PDF (the 2021 link is a 404), the gated standardization eBook, the four truncated PDF URLs, exact licensing wording, Symphony docs export, Concept Catalog page ranges, CTAs, and HydraDB budget.
+7. Send the content owner the open items: current Reference Designs PDF (the 2021 link is a 404), the gated standardization eBook, the four truncated PDF URLs, exact licensing wording, Symphony docs export, Concept Catalog page ranges, CTAs, and HydraDB budget.
 
-## 4. Optional: offline mock
+## 4. Offline mock (removed)
 
-`packages/hydra/docker/docker-compose.yml` runs a HydraDB-compatible mock on port 4010 for plumbing tests. Use `HYDRADB_BASE_URL=http://localhost:4010`. It proves wiring only, never relevance or graph quality.
+The offline HydraDB mock, the web mock store and the demo model were removed on 2026-11-11 (owner decision). The app and the scripts talk to HydraDB only.
 
 ## 5. Deploy to Vercel (do it together, after step 3.5 passes)
 
 1. Create a Vercel project from the repo. Set Root Directory to `apps/web` and keep "Include source files outside of the Root Directory" enabled so `packages/*` is available to the build. Vercel detects pnpm and Turborepo; confirm the install and build commands in project settings.
-2. Environment variables (Production and Preview): `KNOWLEDGE_BACKEND=hydra`, `HYDRADB_API_KEY`, `HYDRADB_BASE_URL`, `HYDRADB_DATABASE` (production database name, created with `pnpm hydra db:create --database <name>` and ingested after your explicit approval), `HYDRADB_COLLECTION`, `CHAT_MODEL`. On Vercel the AI Gateway can authenticate with the project's OIDC token, so `AI_GATEWAY_API_KEY` is only needed locally.
+2. Environment variables (Production and Preview): `HYDRADB_API_KEY`, `HYDRADB_BASE_URL`, `HYDRADB_DATABASE` (production database name, created with `pnpm hydra db:create --database <name>` and ingested after your explicit approval), `HYDRADB_COLLECTION`, `CHAT_MODEL`. On Vercel the AI Gateway can authenticate with the project's OIDC token, so `AI_GATEWAY_API_KEY` is only needed locally.
 3. Deploy a preview first, run the three golden queries on the preview URL, then promote to production.
-4. Before the link goes to anyone outside the team: rate limiting on `/api/chat`, a cost cap on the model, and Nancy's sign-off on content and the disclosure.
+4. Before the link goes to anyone outside the team: rate limiting on `/api/chat`, a cost cap on the model, and the content owner's sign-off on content and the disclosure.
 
 I wrote these Vercel settings from general knowledge; check them against the current Vercel docs when you do it.
 

@@ -1,10 +1,10 @@
-import { createChatResponse } from "../../../lib/agent";
-import { findContactRequest } from "../../../lib/contact-request";
+import { createChatResponse } from "../../../lib/agent/agent";
+import { findContactRequest } from "../../../lib/booking/contact-request";
 import { maxOutputTokens, MISSING_KEY_MESSAGE, resolveModelMode } from "../../../lib/env";
 import { getStore } from "../../../lib/knowledge";
-import { buildModel } from "../../../lib/model";
+import { buildModel } from "../../../lib/agent/model";
 import { chatRateLimiter, clientIp } from "../../../lib/rate-limit";
-import type { ChatMessage } from "../../../lib/tools";
+import type { ChatMessage } from "../../../lib/agent/tools";
 
 export const runtime = "nodejs";
 export const maxDuration = 75; // seconds; the agent itself stops at 60 s
@@ -32,8 +32,8 @@ export async function POST(req: Request): Promise<Response> {
     console.info(`[chat] ${mode.note}`); // one line per model id; never includes keys
   }
 
-  // Cost guard for paid models. The offline demo model costs nothing and are not limited.
-  if (mode.kind === "anthropic" || mode.kind === "gateway") {
+  // Cost guard for paid models.
+  {
     const rl = chatRateLimiter.check(clientIp(req));
     if (!rl.ok)
       return jsonError(429, "rate_limited", `Too many questions in a short time. Please wait about ${Math.ceil(rl.retryAfterSec / 60)} minute(s).`, {

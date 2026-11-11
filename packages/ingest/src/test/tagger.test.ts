@@ -58,6 +58,8 @@ test("tagger: vendor aliases", () => {
   assert.deepEqual(tags("- Neat").vendors, ["neat"]);
   assert.deepEqual(tags("- **SHURE**\n- **LG**\n- Sennheiser\n- Legrand AV").vendors, ["shure", "sennheiser", "lg", "legrand"]);
   assert.deepEqual(tags("A Logi Dock on every desk.").vendors, ["logitech"]);
+  assert.deepEqual(tags("- Sony BRAVIA Professional display\n- Logitech Rally Bar").vendors, ["logitech", "sony"]);
+  assert.deepEqual(tags("A Bravia display.").vendors, ["sony"]);
 });
 
 test("tagger: topic aliases", () => {
@@ -150,7 +152,7 @@ test("merge: identity tags on every section, everything else only when the text 
 test("merge: only vocab tokens, vocab order, caps respected, tokens never cut", () => {
   const everything = [
     "Microsoft Teams, Cisco Webex, Zoom, Google Meet.",
-    "Logitech, Crestron, Neat Bar, HP Poly, Q-SYS, Shure, Sennheiser, LG, Legrand.",
+    "Logitech, Crestron, Neat Bar, HP Poly, Q-SYS, Shure, Sennheiser, LG, Legrand, Sony.",
     "Copilot, Microsoft Places, Teams Premium, meeting equity, interoperability, ease of use, AI, sustainability, security,",
     "ADA accessibility, standardization, monitoring, managed services, help desk, deployment, user training,",
     "Real-Time Design, hybrid, ROI.",

@@ -38,7 +38,7 @@ Case studies with a meeting room story: IDRC (Teams Premium and Places), Global 
 Industry pages for financial services, legal, healthcare and higher education, so answers can take a vertical angle
 
 
-Three queries to show Nancy:
+Three queries to show the content owner:
 
 Each one is written the way a customer would actually type it, and each one exercises a different thing the tool does.
 1. “We have about 40 meeting rooms across three offices, all on Microsoft Teams. Which AVI-SPL reference designs should we standardise on for small, medium and large rooms, and what should we think about for remote participants?”
@@ -46,7 +46,7 @@ Each one is written the way a customer would actually type it, and each one exer
 This pulls the reference designs, the standardisation eBook and the meeting equity guidance into one answer with citations. It shows synthesis across documents, which is the thing a site search cannot do.
 2. “What do we need in place to use Copilot and Microsoft Places in our Teams Rooms, and has AVI-SPL done this for an organisation like ours?”
 
-This pulls the Microsoft practice pages, the smart workplace eBook and the IDRC case study. It shows that the tool surfaces proof, not just product pages, and that it carries the licensing disclosure Nancy fought to get into the eBook.
+This pulls the Microsoft practice pages, the smart workplace eBook and the IDRC case study. It shows that the tool surfaces proof, not just product pages, and that it carries the licensing disclosure the content owner fought to get into the eBook.
 3. “Once the rooms are installed, how do we monitor them, and what happens if a room fails ten minutes before a board meeting?”
 
 This pulls Symphony, support and maintenance, managed services and the Bernalillo County case study. It shows the tool covers the part of the journey where customers usually go quiet, and it sets up the managed services upsell AVI-SPL’s sales team wants.
@@ -54,7 +54,7 @@ This pulls Symphony, support and maintenance, managed services and the Bernalill
  Plan and design
 
 Reference Designs page: https://avispl.com/solutions/reference-designs/
-Reference Designs PDF (2021 edition, the only standalone PDF I found, worth asking Nancy for the current one): https://avispl.com/wp-content/uploads/2021/04/Reference_Designs.pdf
+Reference Designs PDF (2021 edition, the only standalone PDF I found, worth asking the content owner for the current one): https://avispl.com/wp-content/uploads/2021/04/Reference_Designs.pdf
 Sustainability-screened meeting rooms (Logitech): https://avispl.com/solutions/reference-designs/sustainability-screened-meeting-rooms/
 Meeting Rooms solution page: https://avispl.com/solutions/meeting-rooms/
 Building a Scalable Model for Meeting Room Standardization eBook: https://avispl.com/resource/scalable-meeting-room-standardization/

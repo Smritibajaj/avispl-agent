@@ -89,7 +89,7 @@ async function main() {
   if (!s) throw new Error(`unknown source ${sourceId}`);
   if (s.contentType !== "pdf" && s.contentType !== "ebook") throw new Error(`${sourceId} is not a PDF/eBook source`);
   const url = arg("--url") ?? s.url;
-  if (!url || isTruncated(url)) throw new Error(`${sourceId}: no usable citation URL (truncated or missing). Pass --url with the full URL from Nancy.`);
+  if (!url || isTruncated(url)) throw new Error(`${sourceId}: no usable citation URL (truncated or missing). Pass --url with the full URL from the content owner.`);
   if (s.status === "dead_link" && !arg("--url")) throw new Error(`${sourceId}: manifest URL is a 404; pass --url with the current PDF URL.`);
 
   const data = new Uint8Array(await readFile(file));

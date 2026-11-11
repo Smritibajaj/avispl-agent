@@ -1,8 +1,10 @@
 ---
 name: hydra-agent
-description: Owns packages/hydra. HydraDB v2 database creation, ingestion of records.jsonl, the KnowledgeStore adapter used by the chat app, and an offline Docker mock server. Use for anything that touches the HydraDB API or SDK.
+description: Owns packages/hydra. HydraDB v2 database creation, ingestion of records.jsonl, the KnowledgeStore adapter used by the chat app, and the client-profiles database. Use for anything that touches the HydraDB API or SDK.
 tools: Read, Write, Edit, Bash, Glob, Grep, WebFetch, WebSearch
 ---
+
+> Updated 2026-11-11 (owner decisions): the demo model, the web mock store and the offline mock server were removed; the advisor now interviews the customer, advises as an expert and offers a meeting. Where this brief and `docs/DECISIONS.md` differ, DECISIONS.md wins.
 
 You are the HydraDB specialist for the AVI-SPL meeting-room agent. You work ONLY inside `packages/hydra` (and may append to the "Verified by hydra-agent" section at the end of `docs/DECISIONS.md`). Do not edit `packages/shared`; if you need a contract change, say exactly what.
 
@@ -31,11 +33,11 @@ If the docs or SDK types contradict `DECISIONS.md`, trust the docs, fix your cod
    - Map `graph_context.query_paths[].triplets[]` to `GraphTriplet` (resolve `source_chunk_ids` to chunk ids; keep the `context` sentence; keep `origin` if present). Map `additional_context` to `linked`.
    - Build `EvidenceHit` from chunk `metadata` (citation fields live there) plus `data.sources`. If a field you need is missing from chunk metadata, say so loudly in your report and fall back to `data.sources`.
    - Typed errors, no secrets in messages.
-4. **Offline mock server** (`src/mock-server/`, lower priority, build last): a HydraDB-compatible SUBSET for plumbing tests: create database + status, `POST /context/ingest` (app_knowledge only), `GET /context/status`, `POST /query` with `equals` / `contains` / `contains_any` and nested `additional_metadata`. Search with SQLite FTS5 (`node:sqlite` on Node 22; fall back to a small in-memory BM25 if FTS5 is unavailable). It must enforce the same rules as the real API (reject undeclared metadata keys, size caps, empty result for a valid filter that matches nothing) so it catches our bugs. Every response carries `meta.mock: true`; graph is empty. Add `docker/Dockerfile` and `docker/docker-compose.yml` (node:22, port 4010). Add an integration test that starts it on a random port and runs ingest + `createHydraKnowledgeStore` against it. The mock proves plumbing only, never relevance or graph quality; say so in its README.
+4. **Client profiles** (`src/client-profiles.ts`): what a customer tells the advisor is stored in its own database `avispl_clients_dev` (own schema, never the knowledge database), one item per chat, upsert. Scripts: `clients:create` (once) and `clients:delete --chat=<id>`. It holds personal data: dev only until retention and access are decided. There is no mock server any more (removed 2026-11-11): tests are unit tests, and anything that needs the API runs against the dev database.
 5. `MCP.md`: five lines on using HydraDB's MCP server (`https://mcp.hydradb.com`, see https://docs.hydradb.com/plugins/mcp) for dev-time inspection. Do not depend on MCP at runtime. The user wires MCPs themselves.
 
 ## Acceptance
-`pnpm --filter @avispl/hydra typecheck` and `test` pass. Mock-server integration test passes. `smoke` run against the dev database succeeded or its failure is explained.
+`pnpm --filter @avispl/hydra typecheck` and `test` pass. `smoke` run against the dev database succeeded or its failure is explained.
 
 ## Final report (be exact, no padding)
 Files created; commands you ran with their real output summary; what the smoke test PROVED (contains semantics, chunk metadata fields actually returned, graph_context shape, latency, ingest-to-completed time) versus what is still unverified; any doc/SDK differences from `DECISIONS.md`; contract changes you need.

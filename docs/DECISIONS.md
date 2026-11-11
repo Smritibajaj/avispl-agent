@@ -26,7 +26,7 @@ Date: 2026-11-10. These supersede `plan.original.md` wherever they differ. Sourc
 
 | Source | Observation | Manifest status |
 |---|---|---|
-| #2 Reference_Designs.pdf (2021) | 404 | `dead_link` (ask Nancy for the current PDF; Q1 depends on it) |
+| #2 Reference_Designs.pdf (2021) | 404 | `dead_link` (ask the content owner for the current PDF; Q1 depends on it) |
 | #5 Standardization eBook landing | Summary + 6 topics only; the eBook arrives after a form | `gated` |
 | #41 Symphony docs (KnowledgeOwl) | Reader login page | `login_required` |
 | #45 Help Desk (ServiceNow) | Login/portal | `login_required` (replace with ONE hand-written "How to get support" record, content from #44) |
@@ -39,7 +39,7 @@ Date: 2026-11-10. These supersede `plan.original.md` wherever they differ. Sourc
 | #56 Bernalillo County | Numbers are analytics + client estimates (footnote on page) | `ready` with `metrics_are_estimates: true` |
 | #55 Tampa, #49 CBRE | Mixed (video wall, signage, fit-out) | `partial_scope` |
 | Symphony page | Content lives in `main` as separate heading+paragraph blocks; generic "article" extraction returns only a blog teaser | scrape must be verified per page |
-| Smart Workplace HSV eBook | Reads fine in a real browser; a licensing paragraph sits near the top (features depend on Teams Premium/Copilot licences, tenant setup, region) | disclosure text still needs Nancy's exact sign-off |
+| Smart Workplace HSV eBook | Reads fine in a real browser; a licensing paragraph sits near the top (features depend on Teams Premium/Copilot licences, tenant setup, region) | disclosure text still needs the content owner's exact sign-off |
 
 Boilerplate to strip on every avispl.com page: the mega-menu (Video Walls, broadcast, simulation...), the 15-country site list, the 50-state contact form, footer, logo marquee. Only crawl `avispl.com` (never the regional sites).
 
@@ -80,7 +80,7 @@ Still UNVERIFIED (needs `pnpm hydra smoke` against the DEV database with a real 
 
 ## 5. Verified by hydra-agent
 
-Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw JSON in packages/hydra/smoke-results/.
+Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw JSON is written to packages/hydra/smoke-results/ on each run (the 2026-11-10 file was removed in the 2026-11-11 clean-up; the facts below are from it).
 
 ### Smoke run 20261110173908 (2026-11-10T17:39:08.859Z, avispl_meeting_room_dev, @hydradb/sdk 2.1.8)
 - Ingest: phase1 8/8 completed; ms to graph_creation {"min":2617,"median":2617,"max":2617,"n":8}; ms to completed {"min":15740,"median":28884,"max":28884,"n":8}; statuses seen ["graph_creation","completed"].
@@ -98,7 +98,7 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 
 ## 6. Decisions on 2026-11-10 (evening)
 
-- **Licensing disclosure approved by the project owner** ("approve all the things, nothing is pending on Nancy"). `packages/shared/content/disclosure.txt` now holds the paragraph from the Smart Workplace eBook page, copied verbatim from `packages/ingest/data/review/disclosure-candidate.txt`. Known wrinkle: it says "features listed below", which reads oddly at the end of a chat answer; wording may only change with a new approved text.
+- **Licensing disclosure approved by the project owner** ("approve all the things, nothing is pending"). `packages/shared/content/disclosure.txt` now holds the paragraph from the Smart Workplace eBook page, copied verbatim from `packages/ingest/data/review/disclosure-candidate.txt`. Known wrinkle: it says "features listed below", which reads oddly at the end of a chat answer; wording may only change with a new approved text.
 - `requires_disclosure` is set per record (text names Copilot, Microsoft Places or Teams Premium), no longer per source, so the disclosure is not appended to unrelated answers (monitoring, support).
 - HydraDB reserves the metadata field name `source_url` (undocumented); the hydra package stores it as `page_url`.
 - Ollama support removed; the app runs Claude models only. Graph panel removed from the UI at the owner's request.
@@ -107,7 +107,7 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 
 ## 7. Decisions on 2026-11-11
 
-- **Discovery before solutions (owner decision).** The agent asks before it recommends, "to give better answers with better resources". Before recommending a design, platform, device, service tier or rollout approach, or choosing a "closest" case study, it needs six facts: company name, sector, number of rooms and sites, meeting platform, new build or existing rooms, and the customer's journey stage. If any is missing it opens like a consultant, not a form: it plays back what the customer said, asks at most three one-line questions (each with a reason, related facts combined), without searching, at most once per conversation; whatever it did not ask it assumes and states later. (Revised the same day after the owner found the first version, a bare list of four questions plus the AI disclaimer, did not sound good.) It then answers; if the customer declines to share something it proceeds with stated assumptions. Exceptions: live problems, plain factual questions, out-of-scope or declined requests. The list of six was chosen by the integrator from the owner's "company name and the other required things"; change it in the DISCOVERY block of `apps/web/src/lib/system-prompt.ts`.
+- **Discovery before solutions (owner decision).** The agent asks before it recommends, "to give better answers with better resources". Before recommending a design, platform, device, service tier or rollout approach, or choosing a "closest" case study, it needs six facts: company name, sector, number of rooms and sites, meeting platform, new build or existing rooms, and the customer's journey stage. If any is missing it opens like a consultant, not a form: it plays back what the customer said, asks at most three one-line questions (each with a reason, related facts combined), without searching, at most once per conversation; whatever it did not ask it assumes and states later. (Revised the same day after the owner found the first version, a bare list of four questions plus the AI disclaimer, did not sound good.) It then answers; if the customer declines to share something it proceeds with stated assumptions. Exceptions: live problems, plain factual questions, out-of-scope or declined requests. The list of six was chosen by the integrator from the owner's "company name and the other required things"; change it in the DISCOVERY block of `apps/web/src/lib/agent/system-prompt.ts`.
 - The company name is used only to address the customer. The agent never searches for it, states anything about that company, or says whether it is a customer. It does not ask for personal contact details.
 - **Journey.** A solution covers the stage the customer is at and ends with one line pointing to the next stage. This replaces "answer first with stated assumptions" from the earlier prompt.
 - **Streaming.** After a tool result the Anthropic API releases the first seconds of Sonnet 5.5 / Opus 5.5 output in one burst (measured; Haiku 5.5 streams normally; no request option changes it). The agent paces text to the browser with `smoothStream` (`WORD_DELAY_MS` in `apps/web/src/lib/agent.ts`).
@@ -115,7 +115,7 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 - **No AI-assistant line (owner decision).** Replies do not end with "I'm an AI assistant…" or any disclaimer line. If a customer asks whether they are talking to a person or an AI, the agent says truthfully that it is an AI assistant.
 - **Use the stage content (owner decision).** The knowledge base holds material for every journey stage (2026-11-11: plan_design 32 records, choose_platform 120, deploy 10, run_support 22, proof 67). The discovery opening now searches the relevant stage and gives two or three cited sentences on what exists before it asks its questions (a preview, not a recommendation). A solution goes deep on the customer's stage and ends with one cited line from the next stage.
 - **The solution is the customer's journey (owner decision).** The first solution after discovery names the organisation and is laid out in the four stages in order (Plan and design, Choose platform and devices, Deploy, Run and support), each with cited content from that stage, most detail on the stage the customer is at, plus sector proof. This replaces "answer only the customer's stage" above. Later questions get a focused answer that still names the organisation.
-- **Prompt format and grounding (owner request).** `apps/web/src/lib/system-prompt.ts` uses labelled sections (ROLE, TOOLS, GROUNDING, SEARCH, CITATIONS, DISCOVERY, JOURNEY, EMERGENCY, TONE, UNTRUSTED, BOUNDARIES, STOP, OUTPUT, EXAMPLES). GROUNDING holds the anti-hallucination rules: nothing from memory, the agent's own judgement only as "I'd ..." advice on cited facts, numbers copied exactly, and a final check that every sentence is a cited fact, a question, the customer's own facts, such advice, or something it cannot do. The agent no longer gives troubleshooting steps of its own in an emergency.
+- **Prompt format and grounding (owner request).** `apps/web/src/lib/agent/system-prompt.ts` uses labelled sections (ROLE, TOOLS, GROUNDING, SEARCH, CITATIONS, DISCOVERY, JOURNEY, EMERGENCY, TONE, UNTRUSTED, BOUNDARIES, STOP, OUTPUT, EXAMPLES). GROUNDING holds the anti-hallucination rules: nothing from memory, the agent's own judgement only as "I'd ..." advice on cited facts, numbers copied exactly, and a final check that every sentence is a cited fact, a question, the customer's own facts, such advice, or something it cannot do. The agent no longer gives troubleshooting steps of its own in an emergency.
 - **Tracing sources.** `pnpm --filter @avispl/web trace "question"` prints each cited statement of an answer with its source (type, page, section, URL, closest passage). `TRACE_URL` points it at the live site; `--type blog` filters by content type.
 
 ### Slow or failed searches (2026-11-11, later the same day)
@@ -134,8 +134,8 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 - 14 new sources: design and planning, Teams Rooms Express Install, implementation support, end-user training, onsite and enterprise managed services, enterprise maintenance, the standardisation eBook's public landing text, three blogs, and the Heriot-Watt and RMIT case studies.
 - Reload order is always: upsert new and changed records, wait until indexed, then `pnpm hydra delete-stale --previous <old records file>`. The live site reads this database.
 - Still unavailable: the five reference-design pictures carry no legible labels, capacities or equipment, so no record is made from images; the Reference Designs PDF (404) and the standardisation eBook (form) are still missing. Room-size and industry tags stay sparse because the records' own text rarely states them.
-- Vocabulary gaps noted, not added: vendors jabra, planar, sony, epson, samsung.
-- The app has a `/graph` page: sources linked to journey stages, platforms, vendors and topics, built from record tags by `pnpm --filter @avispl/web graph:build` (re-run after every ingest). It is not HydraDB's extracted entity graph.
+- Vocabulary gaps noted, not added: vendors jabra, planar, epson, samsung (`sony` was added on 2026-11-11).
+- The app has a `/graph` page that shows HydraDB's own extracted graph for a search topic (`GET /api/graph`). The earlier tag-based source map (`graph:build`, `kb-graph.json`) was removed on 2026-11-11.
 
 ### Room sizes (2026-11-11, evening)
 
@@ -143,3 +143,11 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 - The expert now runs one search per room size the customer names (room_size filter) and says what is published for each size and whose statement it is (ours or the vendor's). A gap never leads an answer; it is named once after what we do have.
 - Room-size tags added by hand for 26 records whose text describes a room or product for a size without the tagger's words (showrooms by seat count, bar products, auditoriums, lecture halls): `packages/ingest/data/config/manual-tags.json`, applied by `prepare.ts` on every build. Records with a room size: 39 -> 63 of 364. Tags steer search filters only; record text is unchanged. The 25 changed records were upserted to the dev database.
 - No industry tags were added by hand: the field holds one value and the untagged records that mention a sector mention several.
+
+### Clean-up and client data (2026-11-11, night, owner decisions)
+
+- Removed: the demo model, the web mock store and fixtures, the offline HydraDB mock server (and its Docker files and tests), the tag-based graph, `records.new.jsonl` and its build script. `KNOWLEDGE_BACKEND` and `CHAT_MODEL=demo` no longer exist; without a HydraDB key the chat answers 503 `store_unavailable`, without a model key 503 `missing_model_key`.
+- Tests that only exercised the mock store or the demo model went with them (agent loop, tool logic against fixtures, render). Still covered: prompt switch, citations, choices, proof links, client profile, meeting request, model selection, request body, rate limit, hydra unit tests, ingest tests.
+- Client profiles (what a customer tells the advisor, plus contact details after a meeting request) are stored in their own HydraDB database `avispl_clients_dev` with their own schema (`packages/hydra/src/client-profiles.ts`, `docs/HYDRADB_SCHEMA.md` section 10b). Create it once with `pnpm hydra clients:create`. Open: retention period and who may read it, before any production use.
+- `packages/ingest/data/records.jsonl`, `raw/` and `pdf/` are no longer git-ignored, so the knowledge database can be rebuilt from the repository.
+- `apps/web/src/lib` is grouped into `agent/`, `chat/`, `booking/`, `graph/`, `licensing/`, `knowledge/`.

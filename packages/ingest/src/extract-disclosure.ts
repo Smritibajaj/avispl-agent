@@ -1,6 +1,6 @@
 /**
  * Find the licensing paragraph in the scraped Smart Workplace eBook and write it, verbatim, to
- * data/review/disclosure-candidate.txt for Nancy to approve. NEVER writes packages/shared/content/disclosure.txt.
+ * data/review/disclosure-candidate.txt for the content owner to approve. NEVER writes packages/shared/content/disclosure.txt.
  */
 import { existsSync } from "node:fs";
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -35,7 +35,7 @@ async function main() {
   await mkdir(REVIEW_DIR, { recursive: true });
   const out = join(REVIEW_DIR, "disclosure-candidate.txt");
   const header = [
-    "DISCLOSURE CANDIDATE — NOT APPROVED. For Nancy's review only.",
+    "DISCLOSURE CANDIDATE — NOT APPROVED. For the content owner's review only.",
     `Source: ${raw.url} (scraped ${raw.scrapedAt})`,
     "Extracted verbatim from the scraped markdown (markdown formatting may be present).",
     "After approval, the integrator copies the exact approved text into packages/shared/content/disclosure.txt.",

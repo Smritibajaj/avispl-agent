@@ -10,7 +10,7 @@ import type {
 
 /**
  * THE contract between apps/web (consumer) and packages/hydra (provider).
- * apps/web also ships a MockKnowledgeStore so the UI runs with no keys.
+ * The only implementation is the HydraDB store in packages/hydra.
  * Change this file only through the integrator (see README ownership table).
  */
 

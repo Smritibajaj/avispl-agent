@@ -66,14 +66,14 @@ export const SOURCES: ManifestEntry[] = [
     id: "ref-designs-pdf", n: 2, title: "Reference Designs PDF (2021)",
     url: "https://avispl.com/wp-content/uploads/2021/04/Reference_Designs.pdf",
     stage: "plan_design", contentType: "pdf", priority: "P0", goldenQueries: ["Q1"], status: "dead_link",
-    note: "404 in Chrome 2026-11-10. Ask Nancy for the current Reference Designs PDF.",
+    note: "404 in Chrome 2026-11-10. Ask the content owner for the current Reference Designs PDF.",
     defaults: { edition: "2021" }, always: { topics: "standardization" }, expect: { room_sizes: "mobile,small,medium,large,classroom" },
   },
   {
     id: "sustainability-screened-rooms", n: 3, title: "Sustainability-screened meeting rooms (Logitech)",
     url: "https://avispl.com/solutions/reference-designs/sustainability-screened-meeting-rooms/",
     stage: "plan_design", contentType: "page", priority: "P1", goldenQueries: ["Q1"], status: "ready",
-    always: { vendors: "logitech", topics: "sustainability" }, expect: { topics: "standardization" },
+    always: { topics: "sustainability" }, expect: { vendors: "logitech,sony", topics: "standardization" },
   },
   {
     id: "meeting-rooms", n: 4, title: "Meeting Rooms",
@@ -87,7 +87,7 @@ export const SOURCES: ManifestEntry[] = [
     id: "standardization-ebook", n: 5, title: "Building a Scalable Model for Meeting Room Standardization",
     url: "https://avispl.com/resource/scalable-meeting-room-standardization/",
     stage: "plan_design", contentType: "ebook", priority: "P0", goldenQueries: ["Q1"], status: "gated",
-    note: "Landing shows a summary + 6 topics only; the eBook arrives after a form. Need the file from Nancy.",
+    note: "Landing shows a summary + 6 topics only; the eBook arrives after a form. Need the file from the content owner.",
     always: { topics: "standardization" },
   },
   {
@@ -95,7 +95,7 @@ export const SOURCES: ManifestEntry[] = [
     url: null,
     truncatedUrl: `${P}/2023/2023%20PDFs/AVI-SPL%20Avoid%20the%20Bowling%20Alley%20Effect%20…`,
     stage: "plan_design", contentType: "ebook", priority: "P1", goldenQueries: ["Q1"], status: "needs_resolution",
-    note: "URL truncated in the brief. Never guess the suffix; need the full URL from Nancy.",
+    note: "URL truncated in the brief. Never guess the suffix; need the full URL from the content owner.",
     always: { topics: "meeting_equity" }, expect: { topics: "hybrid_meetings" },
   },
   {
@@ -188,7 +188,7 @@ export const SOURCES: ManifestEntry[] = [
     id: "smart-workplace-ebook", n: 20, title: "Smart Workplace with Teams (interactive eBook)",
     url: "https://microsoft-offers.avispl.com/smart-workplace-with-teams",
     stage: "choose_platform", contentType: "interactive_ebook", priority: "P0", goldenQueries: ["Q2"], status: "ready",
-    note: "HSV-built, JS-rendered. Holds the licensing paragraph (disclosure needs Nancy's sign-off).",
+    note: "HSV-built, JS-rendered. Holds the licensing paragraph (disclosure needs the content owner's sign-off).",
     defaults: { requires_disclosure: true }, always: { platforms: "microsoft" }, expect: { topics: "copilot,places,teams_premium" },
     scrape: { waitFor: 4000, scrolls: 6, rawHtml: true },
   },
@@ -354,13 +354,14 @@ export const SOURCES: ManifestEntry[] = [
     stage: "proof", contentType: "case_study", priority: "P0", goldenQueries: ["Q2"], status: "ready",
     note: "Cite only for capabilities the page says were deployed (a mention is not a deployment).",
     industry: "government",
-    defaults: { requires_disclosure: true }, always: { platforms: "microsoft" }, expect: { topics: "teams_premium,places" },
+    defaults: { cs_rooms_count: 70, requires_disclosure: true }, always: { platforms: "microsoft" }, expect: { topics: "teams_premium,places" }, // rooms: "over 70 meeting rooms" (page text)
   },
   {
     id: "global-tech-security-leader", n: 48, title: "Global Technology Security Leader case study",
     url: "https://avispl.com/resources/case-studies/global-technology-security-leader/",
     stage: "proof", contentType: "case_study", priority: "P1", goldenQueries: [], status: "ready",
     industry: "technology",
+    defaults: { cs_rooms_count: 400 }, // rooms: "more than 400 rooms" (page text)
   },
   {
     id: "cbre-berlin", n: 49, title: "CBRE Berlin case study",
@@ -383,7 +384,7 @@ export const SOURCES: ManifestEntry[] = [
     url: "https://avispl.com/resources/case-studies/national-bank-of-canada-case-study/",
     stage: "proof", contentType: "case_study", priority: "P2", goldenQueries: [], status: "ready",
     industry: "financial_services",
-    defaults: { cs_organization: "National Bank of Canada" },
+    defaults: { cs_rooms_count: 425, cs_organization: "National Bank of Canada" }, // rooms: "425 conference rooms" (page text)
   },
   {
     id: "carrollton-bank", n: 52, title: "Carrollton Bank case study",
@@ -405,7 +406,7 @@ export const SOURCES: ManifestEntry[] = [
     stage: "proof", contentType: "case_study", priority: "P2", goldenQueries: [], status: "ready",
     note: "Skype for Business / Polycom era.",
     industry: "retail",
-    defaults: { legacy_platform: true, cs_organization: "7-Eleven" },
+    defaults: { cs_rooms_count: 100, legacy_platform: true, cs_organization: "7-Eleven" }, // rooms: "100 conference rooms" (page text)
   },
   {
     id: "tampa-skycenter-one", n: 55, title: "Tampa International Airport SkyCenter One case study",
@@ -421,7 +422,7 @@ export const SOURCES: ManifestEntry[] = [
     status: "ready",
     note: "Numbers are analytics + client estimates (footnote on page).",
     industry: "government",
-    defaults: { metrics_are_estimates: true }, always: { topics: "managed_services" },
+    defaults: { cs_rooms_count: 120, metrics_are_estimates: true }, always: { topics: "managed_services" }, // rooms: "120 rooms across nine locations" (page text)
   },
   {
     id: "industry-financial-services", n: 57, title: "Financial Services industry",
@@ -528,6 +529,7 @@ export const SOURCES: ManifestEntry[] = [
     stage: "proof", contentType: "case_study", priority: "P2", goldenQueries: [], status: "ready",
     addedAfterBrief: "2026-11-11, linked from scraped pages",
     industry: "higher_education",
+    defaults: { cs_rooms_count: 15 }, // rooms: "15 Meeting Rooms" (page text)
   },
   {
     id: "implementation-support", n: 71, title: "Implementation Support",
@@ -586,8 +588,8 @@ export const SOURCES: ManifestEntry[] = [
     addedAfterBrief: "2026-11-11, linked from managed-services and the case studies index (thin Run and support stage)",
     industry: "higher_education",
     note: "The page's own Organization label reads 'RMIT Symphony'; cs_organization is curated from the page title and body.",
-    defaults: { cs_organization: "RMIT University" },
-    always: { topics: "monitoring" },
+    defaults: { cs_rooms_count: 1000, cs_organization: "RMIT University" },
+    always: { topics: "monitoring" }, // rooms: "over 1,000 rooms" monitored (page text)
   },
 ];
 
