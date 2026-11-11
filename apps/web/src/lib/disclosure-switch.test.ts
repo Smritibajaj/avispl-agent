@@ -15,7 +15,7 @@ test("disclosure switch: off unless LICENSING_DISCLOSURE=on", () => {
   assert.equal(systemPrompt(true), SYSTEM_PROMPT);
   const off = systemPrompt(false);
   assert.doesNotMatch(off, /LICENSING|getLicensingDisclosure/);
-  assert.match(off, /\nSCOPE\n/, "the rest of the prompt is intact");
+  assert.match(off, /\nGROUNDING:[\s\S]*\nEMERGENCY \([\s\S]*\nBOUNDARIES:\n/, "the rest of the prompt is intact");
 });
 
 test("disclosure off: a Copilot/Places question gets no licensing tool call and no licensing line", async () => {
