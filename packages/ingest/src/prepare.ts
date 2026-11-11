@@ -15,15 +15,19 @@ import {
 import { SOURCES, getSource, isTruncated, type ManifestEntry } from "./sources";
 import { canScrape, type RawScrape } from "./scrape";
 import {
-  cleanMarkdown, findRepeatedBlocks, repairHeadings, visibleText, leakageSignals, parseCaseStudyLabels, sectionRelevance, stageForHeading,
+  cleanMarkdown, cleanPdfPageText, findRepeatedBlocks, repairHeadings, visibleText, leakageSignals, parseCaseStudyLabels, sectionRelevance, stageForHeading,
   type CaseLabel, type CleanResult,
 } from "./clean";
-import { MIN_SUBSTANTIVE_WORDS, chunkSections, isLinkOnly, isThin, parseSections, substantiveWords, stableId, withBreadcrumb, type Chunk } from "./split";
+import { MIN_SUBSTANTIVE_WORDS, chunkSections, clipName, isLinkOnly, isThin, parseSections, substantiveWords, stableId, withBreadcrumb, type Chunk, type SplitEvent } from "./split";
 import { applyRelations } from "./relations";
-import { TAG_FIELDS, tagInputFromBody, tagRecord, type RecordTags } from "./tagger";
+import { TAG_FIELDS, detectIndustry, detectStage, tagInputFromBody, tagRecord, type RecordTags } from "./tagger";
 import { splitList } from "@avispl/shared";
 import type { PdfExtract } from "./pdf";
 import { DATA_DIR, PDF_DIR, RAW_DIR, REPORTS_DIR, REVIEW_DIR } from "./paths";
+import { PREP, prepRaw } from "./new-prep";
+
+/** Sources numbered from here on (added 2026-11-11) get the page-specific repairs of new-prep.ts before cleaning. */
+export const PREP_FROM_N = 64;
 
 const SCRAPE_ERRORS_FILE = join(REPORTS_DIR, "scrape-errors.json");
 
@@ -73,18 +77,31 @@ export interface MetaInput {
 export const recordTags = (source: ManifestEntry, body: string, pageTitle: string): RecordTags =>
   tagRecord(source.always, tagInputFromBody(body, pageTitle));
 
+/**
+ * Stage of one record. The page (or page range, or case-study heading) gives the default; a record that is plainly
+ * about deployment/training or about monitoring/managed services/support gets that stage (tagger.detectStage).
+ * Case-study and proof material is never moved by its text: `findCaseStudies` looks for stage "proof".
+ */
+export function stageForRecord(m: Pick<MetaInput, "source" | "stage" | "body" | "pageTitle">): JourneyStage {
+  if (m.source.contentType === "case_study" || m.source.derivedFrom) return m.stage;
+  if (m.stage === "proof" && m.source.contentType !== "industry_page") return m.stage;
+  return detectStage(tagInputFromBody(m.body, m.pageTitle))?.stage ?? m.stage;
+}
+
 export function buildMetadata(m: MetaInput): ChunkMetadata {
   const d = m.source.defaults ?? {};
   const tags = recordTags(m.source, m.body, m.pageTitle).values;
+  // The manifest's curated industry wins; a record of a general page gets one only when its own heading names it.
+  const industry = m.industry ?? m.source.industry ?? detectIndustry(tagInputFromBody(m.body, m.pageTitle)) ?? "general";
   return {
     ...EMPTY_METADATA_DEFAULTS,
-    journey_stage: m.stage,
+    journey_stage: stageForRecord(m),
     content_type: m.source.contentType,
     platforms: tags.platforms,
     vendors: tags.vendors,
     topics: tags.topics,
     room_sizes: tags.room_sizes,
-    industry: m.industry ?? m.source.industry ?? "general",
+    industry,
     status: "needs_review",
     meeting_room_relevant: m.relevant,
     // Per record, like the tags: only sections that actually talk about Copilot, Teams Premium or Places carry the
@@ -95,7 +112,7 @@ export function buildMetadata(m: MetaInput): ChunkMetadata {
     edition: clip(m.edition ?? d.edition ?? "", 16),
     source_url: m.url,
     page_title: clip(m.pageTitle, 160),
-    section: clip(m.section, 160),
+    section: clipName(m.section, 160),
     page_range: clip(m.pageRange ?? "", 16),
     last_modified: m.lastModified ?? "",
     cs_organization: clip(d.cs_organization ?? m.labels?.organization ?? "", 160),
@@ -116,6 +133,11 @@ export function validateRecord(r: IngestRecord): void {
   const leaked = ["priority", "goldenQueries", "golden_queries"].filter((k) => k in r.metadata || k in r.additional);
   if (leaked.length) throw new Error(`${r.sourceId} ${r.id}: local-only fields leaked: ${leaked.join(",")}`);
   if (!r.body.trim()) throw new Error(`${r.sourceId} ${r.id}: empty body`);
+  // HydraDB counts VARCHAR max_length in bytes; zod counts characters
+  for (const [k, max] of [["section", 160], ["page_title", 160]] as const) {
+    const n = Buffer.byteLength(r.metadata[k], "utf8");
+    if (n > max) throw new Error(`${r.sourceId} ${r.id}: metadata.${k} is ${n} bytes (max ${max})`);
+  }
 }
 
 function fitAdditional(a: AdditionalMetadata): AdditionalMetadata {
@@ -126,6 +148,14 @@ function fitAdditional(a: AdditionalMetadata): AdditionalMetadata {
   }
   return out;
 }
+
+/**
+ * Sections reviewed by hand that hold no fact a customer could use (viewer instructions). Dropped by exact heading.
+ * Keep this list short: structure rules in clean.ts / split.ts handle everything that can be recognised generally.
+ */
+export const NO_FACT_SECTIONS: Record<string, { section: string; reason: string }[]> = {
+  "concept-catalog-landing": [{ section: "View the digital magazine", reason: "only tells the reader where to click to open the flip-book viewer" }],
+};
 
 export interface PageBuild {
   records: IngestRecord[];
@@ -139,6 +169,7 @@ export interface PageBuild {
   headingRepairs: number;
   unmatchedHeadings: string[];
   leakage: string[];
+  events: SplitEvent[];
 }
 
 export function buildPageRecords(source: ManifestEntry, raw: RawScrape, repeated: Set<string> = new Set()): PageBuild {
@@ -167,7 +198,13 @@ export function buildPageRecords(source: ManifestEntry, raw: RawScrape, repeated
   const thinSections = sections
     .filter((s) => s.relevance !== "drop" && !isLinkOnly(s) && isThin(s))
     .map((s) => `${s.heading} (${substantiveWords(s)} words: "${visibleText(s.blocks.slice(1).join(" ")).slice(0, 100)}")`);
-  const chunks = chunkSections(sections, pageTitle);
+  const events: SplitEvent[] = [];
+  const noFact = NO_FACT_SECTIONS[source.id] ?? [];
+  const chunks = chunkSections(sections, pageTitle, { events, relevanceFor: partial ? sectionRelevance : undefined }).filter((c) => {
+    const hit = noFact.find((x) => x.section === c.section);
+    if (hit) events.push({ kind: "dropped_thin", section: c.section, words: c.words, text: `no usable fact: ${hit.reason}` });
+    return !hit;
+  });
   const lastCrawled = day(raw.scrapedAt);
   const lastModified = day(raw.metadata.modifiedTime) || day(raw.metadata["article:modified_time"]) || "";
   const notes: string[] = [];
@@ -188,22 +225,100 @@ export function buildPageRecords(source: ManifestEntry, raw: RawScrape, repeated
   return {
     records, clean, labels, chunks, droppedSections, linkOnlySections, thinSections, headingRepairs: fixed.repaired, unmatchedHeadings: fixed.unmatched,
     uncertainSections: chunks.filter((c) => c.relevance === "uncertain").map((c) => c.sectionPath),
-    leakage: leakageSignals(md),
+    leakage: leakageSignals(md), events,
   };
+}
+
+/** Pages under this many words (title pages, a lone pull quote) join the page next to them. */
+export const PDF_MIN_PAGE_WORDS = 60;
+
+export interface PdfPageGroup { from: number; to: number; text: string }
+
+/**
+ * One record per PDF page (cleaned), so a citation points at the page. A page under PDF_MIN_PAGE_WORDS joins the
+ * following page of the same range (the last one joins the page before it).
+ */
+export function pdfPageGroups(text: string, pageRange: string): PdfPageGroup[] {
+  const [first, lastOfRange = first] = pageRange.split("-").map(Number) as [number, number?];
+  const parts = text.split(/<!--\s*page (\d+)\s*-->/);
+  // no page markers: the text cannot be attributed to single pages, so it stays one record for the whole range
+  if (parts.length === 1) return [{ from: first, to: lastOfRange, text: cleanPdfPageText(text) }];
+  const pages: PdfPageGroup[] = [];
+  if (parts[0]?.trim()) pages.push({ from: first, to: first, text: cleanPdfPageText(parts[0]) });
+  for (let i = 1; i < parts.length; i += 2) {
+    const n = Number(parts[i]);
+    pages.push({ from: n, to: n, text: cleanPdfPageText(parts[i + 1] ?? "") });
+  }
+  const wc = (t: string) => t.split(/\s+/).filter(Boolean).length;
+  const out: PdfPageGroup[] = [];
+  let carry: PdfPageGroup | null = null;
+  for (const p of pages.filter((x) => x.text)) {
+    const cur: PdfPageGroup = carry ? { from: carry.from, to: p.to, text: `${carry.text}\n${p.text}` } : p;
+    carry = null;
+    if (wc(cur.text) < PDF_MIN_PAGE_WORDS) { carry = cur; continue; }
+    out.push(cur);
+  }
+  if (carry) {
+    const last = out[out.length - 1];
+    if (last) out[out.length - 1] = { from: last.from, to: carry.to, text: `${last.text}\n${carry.text}` };
+    else out.push(carry);
+  }
+  return out;
+}
+
+/** A PDF page above this many words is split once, at the heading-like line nearest its middle. */
+export const PDF_SPLIT_OVER_WORDS = 360;
+
+/**
+ * Split one over-long page in two at a heading-like line: a short line without end punctuation that follows a
+ * line ending a sentence and is followed by more text. The candidate nearest the middle wins; none -> no split.
+ */
+export function splitPdfPage(text: string): string[] {
+  const lines = text.split("\n");
+  const wc = (t: string) => t.split(/\s+/).filter(Boolean).length;
+  const total = wc(text);
+  if (total <= PDF_SPLIT_OVER_WORDS) return [text];
+  const longest = Math.max(...lines.map((l) => l.length));
+  let best = -1;
+  let bestDist = Infinity;
+  let seen = 0;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i]!.trim();
+    const prev = (lines[i - 1] ?? "").trim();
+    const headingLike = i > 0 && i < lines.length - 1 && /^[A-Z]/.test(l) && !/[.,;:!?]$/.test(l) && l.length < longest * 0.75
+      && /[.!?]["”’)]?$/.test(prev) && l.split(/\s+/).length <= 14;
+    if (headingLike && seen >= 80 && total - seen >= 80) {
+      const dist = Math.abs(seen - total / 2);
+      if (dist < bestDist) { bestDist = dist; best = i; }
+    }
+    seen += wc(l);
+  }
+  return best < 0 ? [text] : [lines.slice(0, best).join("\n"), lines.slice(best).join("\n")];
 }
 
 export function buildPdfRecords(source: ManifestEntry, x: PdfExtract): IngestRecord[] {
   if (isTruncated(x.url)) throw new Error(`${source.id}: truncated url`);
-  return x.sections.map((sec) => {
-    const body = `${source.title} › ${sec.title}\n\n${sec.text}\n`;
-    const metadata = buildMetadata({
-      source, stage: sec.stage ?? source.stage, url: x.url, pageTitle: source.title, section: sec.title, body, relevant: true,
-      lastCrawled: day(x.extractedAt), pageRange: sec.page_range, edition: x.edition, industry: sec.industry,
+  return x.sections.flatMap((sec) => {
+    const pageGroups = pdfPageGroups(sec.text, sec.page_range);
+    const groups = pageGroups.flatMap((g) => {
+      const parts = splitPdfPage(g.text);
+      return parts.map((text, i) => ({ ...g, text, part: parts.length > 1 ? i + 1 : 0 }));
     });
-    return {
-      id: stableId(x.url, `pages-${sec.page_range}`), sourceId: source.id, title: `${source.title} › ${sec.title}`,
-      url: x.url, body, metadata, additional: { contentHash: sha1(body) }, relationIds: [], timestamp: x.extractedAt,
-    };
+    return groups.map((g) => {
+      const range = g.from === g.to ? `${g.from}` : `${g.from}-${g.to}`;
+      const part = g.part > 1 ? `, part ${g.part}` : "";
+      // the whole range in one record keeps the range title; otherwise the page is named
+      const title = groups.length === 1 ? sec.title : `${sec.title} (${g.from === g.to ? "p." : "pp."} ${range}${part})`;
+      const body = `${source.title} › ${title}\n\n${g.text}\n`;
+      const metadata = buildMetadata({
+        source, stage: sec.stage ?? source.stage, url: x.url, pageTitle: source.title, section: title, body, relevant: true,
+        lastCrawled: day(x.extractedAt), pageRange: range, edition: x.edition, industry: sec.industry,
+      });
+      return {
+        id: stableId(x.url, `pages-${range}${g.part > 1 ? `-part-${g.part}` : ""}`), sourceId: source.id, title: `${source.title} › ${title}`,
+        url: x.url, body, metadata, additional: { contentHash: sha1(body) }, relationIds: [], timestamp: x.extractedAt,
+      };
+    });
   });
 }
 
@@ -220,7 +335,7 @@ export function buildSupportHowto(derived: ManifestEntry, from: PageBuild, fromS
   const body = [
     `${derived.title} › From ${fromSource.title}`,
     `The text below is quoted from the AVI-SPL ${fromSource.title} page (${fromSource.url}).`,
-    ...picked.map((c) => c.body),
+    ...picked.map((c) => `### ${c.section}\n\n${c.body}`),
     helpDesk?.url ? `AVI-SPL Help Desk portal (customer login required): ${helpDesk.url}` : "",
   ].filter(Boolean).join("\n\n") + "\n";
   const base = from.records[0];
@@ -233,6 +348,50 @@ export function buildSupportHowto(derived: ManifestEntry, from: PageBuild, fromS
     url: derived.url, body, metadata, additional: { contentHash: sha1(body), parentUrl: fromSource.url ?? undefined },
     relationIds: [], ...(base?.timestamp ? { timestamp: base.timestamp } : {}),
   };
+}
+
+export interface DuplicateDrop { dropped: IngestRecord; keptId: string; keptSource: string; keptSection: string; share: number }
+
+const sentencesOf = (body: string): string[] => {
+  const nl = body.indexOf("\n");
+  return visibleText(nl === -1 ? "" : body.slice(nl + 1))
+    .split(/(?<=[.!?:])\s+/)
+    .map((t) => t.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim())
+    .filter((t) => t.split(" ").length >= 4);
+};
+
+/**
+ * The same passage ingested twice (two pages carrying one block, or a page repeating itself): a record is dropped
+ * when at least 90% of its sentences (by words) also stand in ONE other record. Of two identical records the first
+ * in manifest order stays. Derived records (the hand-assembled "How to get support") are quotations by design
+ * and are neither dropped nor used as a reason to drop.
+ */
+export function dropDuplicates(records: IngestRecord[], isDerived: (sourceId: string) => boolean = () => false): { kept: IngestRecord[]; dropped: DuplicateDrop[] } {
+  const sets = records.map((r) => (isDerived(r.sourceId) ? null : sentencesOf(r.body)));
+  const dropped: DuplicateDrop[] = [];
+  const gone = new Set<number>();
+  for (let i = 0; i < records.length; i++) {
+    const a = sets[i];
+    if (!a || !a.length) continue;
+    const total = a.reduce((n, t) => n + t.split(" ").length, 0);
+    for (let j = 0; j < records.length; j++) {
+      const b = sets[j];
+      if (i === j || !b || gone.has(j)) continue;
+      const inB = new Set(b);
+      const shared = a.filter((t) => inB.has(t)).reduce((n, t) => n + t.split(" ").length, 0);
+      const share = shared / total;
+      if (share < 0.9) continue;
+      const bTotal = b.reduce((n, t) => n + t.split(" ").length, 0);
+      const identical = bTotal === total && b.every((t) => a.includes(t));
+      if (identical && j > i) continue; // the earlier of two identical records stays
+      if (!identical && bTotal < total) continue; // the fuller record stays
+      const k = records[j]!;
+      dropped.push({ dropped: records[i]!, keptId: k.id, keptSource: k.sourceId, keptSection: k.metadata.section, share });
+      gone.add(i);
+      break;
+    }
+  }
+  return { kept: records.filter((_, i) => !gone.has(i)), dropped };
 }
 
 export function applyApprovals(records: IngestRecord[], approvals: Approvals): number {
@@ -250,12 +409,24 @@ async function readJson<T>(f: string): Promise<T> {
   return JSON.parse(await readFile(f, "utf8")) as T;
 }
 
+const argValue = (name: string): string | undefined => {
+  const i = process.argv.indexOf(name);
+  return i >= 0 ? process.argv[i + 1] : undefined;
+};
+
 async function main() {
+  // --sources-from <records.jsonl>: build only the sources that have records in that file (a refresh of the
+  // existing knowledge base that must not pull in sources someone else is still adding to the manifest).
+  const onlyFrom = argValue("--sources-from");
+  const only = onlyFrom
+    ? new Set((await readFile(onlyFrom, "utf8")).split("\n").filter(Boolean).map((l) => (JSON.parse(l) as IngestRecord).sourceId))
+    : null;
+  const wanted = (id: string) => !only || only.has(id);
   const rawFiles = existsSync(RAW_DIR) ? (await readdir(RAW_DIR)).filter((f) => f.endsWith(".json")) : [];
   const raws = new Map<string, RawScrape>();
   for (const f of rawFiles) {
     const r = await readJson<RawScrape>(join(RAW_DIR, f));
-    if (f === `${r.id}.json`) raws.set(r.id, r); // ignore A/B variants like <id>.nomain.json
+    if (f === `${r.id}.json` && wanted(r.id)) raws.set(r.id, r); // ignore A/B variants like <id>.nomain.json
   }
   const pdfs = new Map<string, PdfExtract>();
   if (existsSync(PDF_DIR)) for (const f of (await readdir(PDF_DIR)).filter((x) => x.endsWith(".json"))) {
@@ -271,9 +442,10 @@ async function main() {
   const skipped: { s: ManifestEntry; reason: string }[] = [];
   const builds = new Map<string, PageBuild>();
   const errors: string[] = [];
+  const prepNotes = new Map<string, string[]>();
 
   for (const s of SOURCES) {
-    if (s.derivedFrom) continue;
+    if (s.derivedFrom || !wanted(s.id)) continue;
     const pdf = pdfs.get(s.id);
     if (pdf) {
       try { records.push(...buildPdfRecords(s, pdf)); } catch (e) { errors.push(String(e)); }
@@ -288,17 +460,26 @@ async function main() {
       continue;
     }
     if (raw.markdown.trim().length < 200) { skipped.push({ s, reason: `scrape too thin (${raw.markdown.length} chars)` }); continue; }
-    const b = buildPageRecords(s, raw, repeated);
+    // Page-specific repairs taken from the page's own DOM (counters, tab widgets) come first; then the shared rules.
+    const rule = PREP[s.id];
+    const prep = s.n >= PREP_FROM_N || rule ? prepRaw(raw, s.title, rule) : { raw, notes: [] as string[] };
+    const b = buildPageRecords(s, prep.raw, repeated);
+    if (rule?.dropSections) b.records = b.records.filter((r) => !rule.dropSections!.test(r.metadata.section));
+    prepNotes.set(s.id, prep.notes);
     builds.set(s.id, b);
     records.push(...b.records);
   }
-  for (const s of SOURCES.filter((x) => x.derivedFrom)) {
+  for (const s of SOURCES.filter((x) => x.derivedFrom && wanted(x.id))) {
     const from = builds.get(s.derivedFrom!);
     const fromSource = getSource(s.derivedFrom!);
     const rec = from && fromSource ? buildSupportHowto(s, from, fromSource) : null;
     if (rec) records.push(rec);
     else skipped.push({ s, reason: `derived from ${s.derivedFrom}, which has no records yet` });
   }
+
+  const dedupe = dropDuplicates(records, (id) => Boolean(getSource(id)?.derivedFrom));
+  records.length = 0;
+  records.push(...dedupe.kept);
 
   const unresolved = applyRelations(records);
   const approvals: Approvals = existsSync(APPROVALS_FILE) ? await readJson<Approvals>(APPROVALS_FILE) : {};
@@ -311,6 +492,18 @@ async function main() {
 
   await mkdir(REPORTS_DIR, { recursive: true });
   await writeFile(join(DATA_DIR, RECORDS_FILENAME), records.map((r) => JSON.stringify(r)).join("\n") + (records.length ? "\n" : ""));
+  await writeFile(join(REPORTS_DIR, "refine-events.json"), JSON.stringify({
+    generatedAt: new Date().toISOString(),
+    duplicates: dedupe.dropped.map((d) => ({
+      sourceId: d.dropped.sourceId, id: d.dropped.id, section: d.dropped.metadata.section, share: Math.round(d.share * 100) / 100,
+      keptId: d.keptId, keptSource: d.keptSource, keptSection: d.keptSection,
+    })),
+    pages: Object.fromEntries([...builds].map(([id, b]) => [id, {
+      events: b.events, prep: prepNotes.get(id) ?? [],
+      removed: b.clean.removed.filter((r) => ["media_fallback", "blog_nav", "share_links", "anchor_nav", "related_posts", "logo_caption"].includes(r.kind)),
+      linkOnlySections: b.linkOnlySections, thinSections: b.thinSections,
+    }])),
+  }, null, 2));
   await writeFile(join(REPORTS_DIR, "prepare-report.md"), renderReport({ records, skipped, builds, unresolved, errors, published, repeated: repeated.size }));
   console.log(`records: ${records.length} (published ${published}, needs_review ${records.length - published}) from ${new Set(records.map((r) => r.sourceId)).size} source(s); skipped ${skipped.length}; unresolved relations ${unresolved.length}; errors ${errors.length}`);
   console.log(`wrote ${join(DATA_DIR, RECORDS_FILENAME)} and ${join(REPORTS_DIR, "prepare-report.md")}`);

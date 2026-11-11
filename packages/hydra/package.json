@@ -16,6 +16,7 @@
     "ingest": "tsx src/scripts/ingest.ts",
     "smoke": "tsx src/scripts/smoke.ts",
     "query:cli": "tsx src/scripts/query-cli.ts",
+    "delete-stale": "tsx src/scripts/delete-stale.ts",
     "mock": "tsx src/mock-server/main.ts"
   },
   "dependencies": {

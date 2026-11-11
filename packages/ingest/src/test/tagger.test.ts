@@ -275,13 +275,15 @@ test("manifest: sources added after the brief take n > 60 and never disturb 1..6
   const { BRIEF_SOURCE_COUNT, isBriefSource } = await import("../sources");
   assert.equal(SOURCES.filter(isBriefSource).length, BRIEF_SOURCE_COUNT);
   const added = SOURCES.filter((s) => s.addedAfterBrief);
-  assert.deepEqual(added.map((s) => [s.id, s.n]), [["standardization-guide-blog", 62], ["teams-rooms-faq", 63]]);
+  // 62 and 63 were added on 2026-11-10; 64..78 were appended on 2026-11-11 (owner-approved extra pages).
+  assert.deepEqual(added.slice(0, 2).map((s) => [s.id, s.n]), [["standardization-guide-blog", 62], ["teams-rooms-faq", 63]]);
+  assert.ok(added.slice(2).every((s, i) => s.n === 64 + i), "later additions are appended in order from 64");
   const first = SOURCES[0]!;
   const extra = (over: Partial<ManifestEntry>): ManifestEntry => ({ ...first, id: "synthetic-extra", url: "https://avispl.com/synthetic-extra/", ...over });
-  assert.ok(validateManifest([...SOURCES, extra({ n: 64 })]).some((p) => /needs `addedAfterBrief`/.test(p)));
+  assert.ok(validateManifest([...SOURCES, extra({ n: 99 })]).some((p) => /needs `addedAfterBrief`/.test(p)));
   assert.ok(validateManifest([...SOURCES, extra({ n: 63, addedAfterBrief: "test" })]).some((p) => /duplicate source number/.test(p)));
   assert.ok(validateManifest([...SOURCES, extra({ n: 13, addedAfterBrief: "test" })]).some((p) => /must use n > 60/.test(p)));
-  assert.deepEqual(validateManifest([...SOURCES, extra({ n: 64, addedAfterBrief: "test" })]), []);
+  assert.deepEqual(validateManifest([...SOURCES, extra({ n: 99, addedAfterBrief: "test" })]), []);
   // the two PDF URLs resolved from scraped pages are complete, and no resolved source keeps a truncated URL
   for (const id of ["concept-catalog-2025-winter", "lg-express-teams-room-pdf"]) {
     const s = SOURCES.find((x) => x.id === id)!;

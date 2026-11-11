@@ -23,7 +23,7 @@ export function parseArgs(argv = process.argv.slice(2)): Args {
   const flags = new Set<string>();
   const values = new Map<string, string>();
   const positionals: string[] = [];
-  const VALUED = new Set(["database", "collection", "file", "stage", "content-type", "platform", "topic", "room-size", "industry", "vendor", "max", "exact", "batch-size", "timeout"]);
+  const VALUED = new Set(["database", "collection", "file", "stage", "content-type", "platform", "topic", "room-size", "industry", "vendor", "max", "exact", "batch-size", "timeout", "previous"]);
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i]!;
     if (a === "--") continue;

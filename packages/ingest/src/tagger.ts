@@ -15,7 +15,7 @@
  */
 import {
   HYDRA_METADATA_SCHEMA, PLATFORMS, ROOM_SIZES, TOPICS, VENDORS, joinList, splitList,
-  type Platform, type RoomSize, type Topic, type Vendor,
+  type Industry, type Platform, type RoomSize, type Topic, type Vendor,
 } from "@avispl/shared";
 
 export const TAG_FIELDS = ["platforms", "vendors", "topics", "room_sizes"] as const;
@@ -157,7 +157,7 @@ export const TOPIC_RULES: Rule<Topic>[] = [
   },
   {
     tag: "ease_of_use",
-    any: [/\bease of use\b/i, /\beasy[- ]to[- ]use\b/i, /\buser[- ]friendly\b/i, /\bone[- ]touch\b/i, /\bintuitive\b/i, /\bsimple to (?:use|operate|join)\b/i, /\beasy to (?:use|join|operate)\b/i],
+    any: [/\bease of use\b/i, /\beasy[- ]to[- ]use\b/i, /\buser[- ]friendly\b/i, /\bone[- ]touch\b/i, /\bintuitive(?:ness|ly)?\b/i, /\bsimple to (?:use|operate|join)\b/i, /\beasy to (?:use|join|operate)\b/i],
   },
   {
     tag: "ai_features",
@@ -216,8 +216,10 @@ export const TOPIC_RULES: Rule<Topic>[] = [
 // ---- room sizes: a size word counts only when it qualifies a room/space, or in a list of bare size items ----
 
 const SIZE_WORD = String.raw`(?:extra[- ]large|x-?large|small(?:er)?|medium|mid(?:size)?|large(?:r)?|huddle|mobile|classroom)(?:[- ]sized?)?`;
+/** A product name in brackets right after the size word: "small (TeamConnect Bar S) or mid-sized (TeamConnect Bar M) spaces". */
+const SIZE_NOTE = String.raw`(?: \([^()]{1,40}\))?`;
 const SIZE_GROUP_RE = re(
-  String.raw`\b(${SIZE_WORD}(?: ?(?:,|\/|&|-|and|or|to) ?(?:and |or )?${SIZE_WORD})*)[- ]+(?:(?:meeting|conference|collaboration|team|teams|microsoft|signature|zoom|webex|google|hybrid|video|focus|training|huddle|board|and)[- ]+){0,3}(?:rooms?|spaces?|boardrooms?)\b`,
+  String.raw`\b(${SIZE_WORD}${SIZE_NOTE}(?: ?(?:,|\/|&|-to-|-|and|or|to) ?(?:and |or )?${SIZE_WORD}${SIZE_NOTE})*)[- ]+(?:(?:meeting|conference|collaboration|team|teams|microsoft|signature|zoom|webex|google|hybrid|video|focus|training|huddle|board|divisible|multipurpose|and)[- ]+){0,3}(?:rooms?|spaces?|boardrooms?)\b`,
   "gi",
 );
 const SIZE_ITEM_RE = /^(mobile|huddle|small|medium|large|classroom)s?(?: (?:rooms?|spaces?))?$/i;
@@ -238,12 +240,12 @@ export function detectRoomSizes(lines: TagLine[]): RoomSize[] {
   const bareItems = new Set<RoomSize>();
   for (const { text } of lines) {
     for (const m of text.matchAll(SIZE_GROUP_RE)) {
-      for (const w of m[1]!.matchAll(/extra[- ]large|x-?large|small|medium|mid|large|huddle|mobile|classroom/gi)) {
+      for (const w of m[1]!.replace(/\([^()]*\)/g, " ").matchAll(/extra[- ]large|x-?large|small|medium|mid|large|huddle|mobile|classroom/gi)) {
         const s = sizeOf(w[0]);
         if (s) found.add(s);
       }
     }
-    if (/\bhuddle (?:rooms?|spaces?|areas?)\b/i.test(text)) found.add("huddle");
+    if (/\bhuddle\)? (?:rooms?|spaces?|areas?)\b/i.test(text)) found.add("huddle");
     if (/\bclassrooms?\b/i.test(text)) found.add("classroom");
     if (/\bmobile (?:(?:video|meeting|collaboration|display|AV) )?(?:carts?|units?|stands?)\b/i.test(text)) found.add("mobile");
     const item = SIZE_ITEM_RE.exec(text);
@@ -257,6 +259,69 @@ export function detectRoomSizes(lines: TagLine[]): RoomSize[] {
   // (a lone "Mobile" item is more likely a device type).
   if (bareItems.size >= 2) for (const s of bareItems) found.add(s);
   return ROOM_SIZES.filter((s) => found.has(s));
+}
+
+// ---------------------------------------------------------------------------------------------
+// Industry and journey stage (single-value fields)
+// ---------------------------------------------------------------------------------------------
+
+/** Industry names as they appear in a HEADING. Deliberately narrow: "education" alone is not higher education. */
+export const INDUSTRY_HEADING_RULES: { industry: Industry; re: RegExp }[] = [
+  { industry: "financial_services", re: /\b(?:financial services|financial institutions?|banks?|banking|wealth management)\b/i },
+  { industry: "legal", re: /\b(?:law firms?|legal (?:industry|sector|services)|courtrooms?)\b/i },
+  { industry: "healthcare", re: /\b(?:healthcare|health care|hospitals?|clinical|telehealth)\b/i },
+  { industry: "higher_education", re: /\b(?:higher education|higher ed|universit(?:y|ies)|colleges?)\b/i },
+  { industry: "real_estate", re: /\b(?:commercial real estate|real estate (?:firms?|industry|sector|compan(?:y|ies)))\b/i },
+  { industry: "government", re: /\b(?:government|public sector|federal|municipal)\b/i },
+  { industry: "transportation", re: /\b(?:airports?|airlines?|transportation)\b/i },
+  { industry: "nonprofit", re: /\b(?:non-?profits?)\b/i },
+  { industry: "retail", re: /\b(?:retail(?:ers?)?)\b/i },
+];
+
+/**
+ * Industry of ONE record when its own heading names exactly one industry (e.g. "Government Workspaces").
+ * Body text is not used: partner pages list industries in passing ("from retail to healthcare"), which says
+ * nothing about what the record is about. Returns null when the heading names none or several.
+ */
+export function detectIndustry(input: TagInput): Industry | null {
+  const heading = ownHeading(input.headingPath);
+  if (!heading || heading.includes("; ")) return null; // a joined label names several cards, not one subject
+  const hits = INDUSTRY_HEADING_RULES.filter((r) => r.re.test(heading)).map((r) => r.industry);
+  return hits.length === 1 ? hits[0]! : null;
+}
+
+const DEPLOY_TERMS = /\b(?:deploy(?:s|ed|ing|ment|ments)?|install(?:s|ed|ing|ation|ations|ers?)?|implement(?:ed|ing|ation|ations)|roll(?:ed|ing)?[- ]?outs?|commission(?:ed|ing)|training|trained|trainers?|user adoption|adoption (?:services?|programs?)|onboarding|change management|program manage(?:r|rs|ment)|project manage(?:r|rs|ment)|go-live|procure(?:s|d|ment)?|staging)\b/i;
+const RUN_TERMS = /\b(?:monitor(?:s|ed|ing)|managed services?|maintenance|help ?desk|service desk|tickets?|ticketing|incidents?|break[\/ -]?fix|troubleshoot\w*|preventative|preventive|24 ?[\/x] ?7|around the clock|(?:remote|on-?site|technical|lifecycle|ongoing|proactive|field|live|phone|global|priority) (?:support|assistance)|support (?:teams?|services?|plans?|options?|levels?|contracts?|agreements?|desk|coverage|staff|engineers?|technicians?)|downtime|dispatch|SLAs?|outsourc\w+|room sweeps?|self-healing|warrant(?:y|ies))\b/i;
+const DEPLOY_HEADING = /\b(?:deploy(?:ment|ments|ing)?|install(?:ation|ations|ing)?|implementation|roll-?outs?|training|adoption|commissioning|program management|project management)\b/i;
+const RUN_HEADING = /\b(?:managed services?|monitoring|maintenance|help ?desk|service desk|incident management|support (?:options|levels?|services?|plans?)|(?:enhanced|elite|enterprise|remote|on-?site|technical|ongoing|proactive|lifecycle) support)\b/i;
+
+export interface StageEvidence { stage: "deploy" | "run_support"; sentences: number; deploy: number; run: number; heading: boolean }
+
+/**
+ * Journey stage a record is PLAINLY about, from its own text, or null to keep the page's stage.
+ * Only "deploy" (deployment, installation, training) and "run_support" (monitoring, managed services, support)
+ * are ever detected. A stage is assigned when
+ *   - the record's own heading names it AND at least a third of its sentences are about it, or
+ *   - at least three sentences and 60% of all sentences (of four or more) are about it,
+ * and in both cases it clearly outweighs the other stage (twice as many sentences).
+ */
+export function detectStage(input: TagInput): StageEvidence | null {
+  const heading = ownHeading(input.headingPath);
+  const sentences = toTagLines(input.body)
+    .filter((l) => !l.heading)
+    .flatMap((l) => l.text.split(/(?<=[.!?])\s+/))
+    .filter((t) => t.split(/\s+/).length >= 4);
+  if (sentences.length === 0) return null;
+  const d = sentences.filter((t) => DEPLOY_TERMS.test(t)).length;
+  const r = sentences.filter((t) => RUN_TERMS.test(t)).length;
+  const n = sentences.length;
+  const pick = (stage: "deploy" | "run_support", own: number, other: number, headingRe: RegExp, otherHeadingRe: RegExp): StageEvidence | null => {
+    const inHeading = headingRe.test(heading) && !otherHeadingRe.test(heading);
+    const byHeading = inHeading && own >= 1 && own / n >= 1 / 3;
+    const byBody = own >= 3 && n >= 4 && own / n >= 0.6 && !otherHeadingRe.test(heading);
+    return (byHeading || byBody) && own >= other * 2 ? { stage, sentences: n, deploy: d, run: r, heading: inHeading } : null;
+  };
+  return pick("deploy", d, r, DEPLOY_HEADING, RUN_HEADING) ?? pick("run_support", r, d, RUN_HEADING, DEPLOY_HEADING);
 }
 
 // ---------------------------------------------------------------------------------------------
@@ -287,6 +352,22 @@ const linesOf = (input: TagInput): TagLine[] => [
   ...toTagLines(input.body),
 ];
 
+/**
+ * Runs of consecutive plain text lines joined into one line (soft line breaks inside a paragraph). Headings, list
+ * items and table rows end a run. Used for room sizes only: brand rules rely on real sentence starts.
+ */
+export function joinedRuns(markdown: string): TagLine[] {
+  const out: string[] = [];
+  let run: string[] = [];
+  const flush = () => { if (run.length > 1) out.push(run.join(" ")); run = []; };
+  for (const line of markdown.replace(/\r/g, "").split("\n")) {
+    if (!line.trim() || /^\s*(?:[-*+•|#>]|\d+[.)]\s)/.test(line)) { flush(); continue; }
+    run.push(line.trim());
+  }
+  flush();
+  return out.flatMap((t) => toTagLines(t));
+}
+
 /** Why each platform/vendor/topic tag was detected: tag -> matching snippet. For inspection and review only. */
 export function explainTags(input: TagInput): Record<string, string> {
   const lines = linesOf(input);
@@ -311,7 +392,8 @@ export function detectTags(input: TagInput): TagSets {
     platforms: applyRules(PLATFORM_RULES, lines),
     vendors: applyRules(VENDOR_RULES, lines),
     topics: applyRules(TOPIC_RULES, lines),
-    room_sizes: detectRoomSizes(lines),
+    // PDF text is hard-wrapped ("huddle" / "spaces" on two lines): size phrases are also read across the wrap.
+    room_sizes: detectRoomSizes([...lines, ...joinedRuns(input.body)]),
   };
 }
 

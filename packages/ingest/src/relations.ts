@@ -18,6 +18,27 @@ export const RELATION_GROUPS: { name: string; sources: string[] }[] = [
   { name: "Support and Maintenance <-> How to get support", sources: ["support-maintenance", "support-howto"] },
 ];
 
+/**
+ * Sources added after the brief -> sources they should pull in. One-directional: the records of the target
+ * sources are not changed (their relationIds stay as the groups above define them).
+ */
+export const ONE_WAY_RELATIONS: Record<string, string[]> = {
+  "design-planning": ["real-time-design", "ref-designs-page"],
+  "teams-rooms-express-install": ["teams-rooms-faq", "express-lane-webcast", "microsoft-practice"],
+  "standardization-ebook-landing": ["ref-designs-page"],
+  "cisco-powered-meeting-rooms-blog": ["cisco", "managed-services"],
+  "financial-services-collab-blog": ["industry-financial-services", "standardization-ebook-landing"],
+  "heriot-watt-university": ["industry-higher-education"],
+  "implementation-support": ["professional-services", "global-deployment", "end-user-training"],
+  "end-user-training": ["professional-services", "implementation-support"],
+  "onsite-managed-services": ["managed-services", "enterprise-managed-services"],
+  "enterprise-managed-services": ["managed-services", "onsite-managed-services", "symphony"],
+  "enterprise-maintenance": ["support-maintenance", "managed-services"],
+  "symphony-multi-vendor-blog": ["symphony", "rmit-symphony"],
+  "symphony-ai-hp-poly-blog": ["symphony", "hp-poly"],
+  "rmit-symphony": ["symphony", "managed-services"],
+};
+
 export function relatedSources(sourceId: string, groups = RELATION_GROUPS): string[] {
   const out = new Set<string>();
   for (const g of groups) if (g.sources.includes(sourceId)) for (const s of g.sources) if (s !== sourceId) out.add(s);
@@ -32,12 +53,12 @@ export function primaryRecordIds(records: Pick<IngestRecord, "id" | "sourceId">[
 }
 
 /** Mutates `relationIds` on every record. Returns unresolved links as "from -> to". */
-export function applyRelations(records: IngestRecord[], groups = RELATION_GROUPS): string[] {
+export function applyRelations(records: IngestRecord[], groups = RELATION_GROUPS, oneWay: Record<string, string[]> = ONE_WAY_RELATIONS): string[] {
   const primary = primaryRecordIds(records);
   const unresolved = new Set<string>();
   for (const r of records) {
     const ids: string[] = [];
-    for (const target of relatedSources(r.sourceId, groups)) {
+    for (const target of [...relatedSources(r.sourceId, groups), ...(oneWay[r.sourceId] ?? [])]) {
       const id = primary.get(target);
       if (id) ids.push(id);
       else unresolved.add(`${r.sourceId} -> ${target}`);

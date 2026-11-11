@@ -1,12 +1,11 @@
 /**
  * Split cleaned markdown into sections at H2/H3 (H1 also starts a section; the page-title H1 is dropped).
- * Chunks target 300-900 words; small pages stay one record when all sections share one stage and relevance.
- * Tables and lists are never split. Breadcrumb first line: "Page › Section".
+ * One record covers one topic, roughly 80-300 words (see chunkSections). Tables and lists are never split. Breadcrumb first line: "Page › Section".
  * Stable id: sha1(canonicalUrl + "#" + sectionSlug).
  */
 import { createHash } from "node:crypto";
 import type { JourneyStage } from "@avispl/shared";
-import { stripLinks, toBlocks, wordCount } from "./clean";
+import { stripLinks, toBlocks, visibleText, wordCount } from "./clean";
 
 export const MIN_WORDS = 300;
 export const MAX_WORDS = 900;
@@ -122,37 +121,249 @@ export function parseSections(
 const pathOf = (s: Section): string =>
   s.heading ? (s.parent && s.level === 3 ? `${s.parent} › ${s.heading}` : s.heading) : "Overview";
 
-/** Split one oversized section at block boundaries (tables/lists/code stay whole). */
-function splitLarge(blocks: string[]): string[][] {
+// ---------------------------------------------------------------------------------------------
+// One topic per record
+// ---------------------------------------------------------------------------------------------
+
+/** A leading untitled intro under this many words joins the first headed section of the page. */
+export const SHORT_WORDS = 40;
+/** A family (H2 + its H3 children) whose members are ALL under this is one topic shown as cards: one record. */
+export const FAMILY_MEMBER_WORDS = 60;
+/** Soft upper size of one record. */
+export const TARGET_MAX_WORDS = 300;
+/** Sections above this are split at paragraph boundaries. */
+export const SPLIT_OVER_WORDS = 330;
+/** A section with H4-H6 sub-headings is split at them once it is longer than this. */
+export const SUBHEAD_SPLIT_OVER = 150;
+/** A sub-heading unit at least this long is its own record; smaller neighbours are packed together. */
+export const OWN_RECORD_WORDS = 60;
+
+export type SplitEvent =
+  | { kind: "dropped_thin"; section: string; words: number; text: string }
+  | { kind: "merged_intro"; section: string; into: string; words: number }
+  | { kind: "merged_family"; section: string; members: string[] }
+  | { kind: "split_faq" | "split_subheadings" | "split_long"; section: string; words: number; into: string[] };
+
+export interface ChunkOptions {
+  /** Re-scored for every piece of a split section (partial_scope sources). */
+  relevanceFor?: (text: string) => Section["relevance"];
+  /** Collects what was merged, split and dropped (for the report). */
+  events?: SplitEvent[];
+}
+
+interface Piece { section: string; path: string; blocks: string[] }
+interface Unit { head: string; blocks: string[] }
+
+const words = (blocks: string[]) => wordCount(blocks.join("\n\n"));
+const isHeadingBlock = (b: string) => /^#{1,6}\s/.test(b);
+const isSubHeading = (b: string) => /^#{4,6}\s/.test(b);
+const isListBlock = (b: string) => b.split("\n").every((l) => /^\s*([-*+]|\d+[.)])\s/.test(l));
+const isBoldLabel = (b: string) => /^\*\*[^*\n]+\*\*$/.test(b.trim()) && wordCount(b) <= 15;
+/** A question paragraph of an FAQ: one line, ends with "?", not a heading or list. */
+export const isQuestionBlock = (b: string): boolean => {
+  if (isHeadingBlock(b) || isListBlock(b) || b.includes("\n")) return false;
+  const t = b.replace(/[*_]/g, "").trim();
+  const n = wordCount(b);
+  return /\?$/.test(t) && n >= 3 && n <= 30;
+};
+const sameText = (a: string, b: string) => norm(a.replace(/[*_`#]/g, "")) === norm(b);
+
+/** Join sub-heading names into one section label, whole names only, within `max` chars. */
+export function joinNames(names: string[], max = 160): string {
+  let out = "";
+  for (const n of names) {
+    const next = out ? `${out}; ${n}` : n;
+    if (bytes(next) > max) break;
+    out = next;
+  }
+  return out || clipName(names[0] ?? "", max);
+}
+
+function toUnits(blocks: string[], starts: (b: string) => boolean, headOf: (b: string) => string): { intro: string[]; units: Unit[] } {
+  const intro: string[] = [];
+  const units: Unit[] = [];
+  for (const b of blocks) {
+    if (starts(b)) units.push({ head: headOf(b), blocks: [b] });
+    else if (units.length) units[units.length - 1]!.blocks.push(b);
+    else intro.push(b);
+  }
+  return { intro, units };
+}
+
+/**
+ * Split an oversized run of blocks into balanced parts at paragraph boundaries. Never separates a paragraph that
+ * ends with ":" from the list after it, a heading or bold label from what follows, or a quote from its short
+ * attribution lines. A bold label line is a preferred boundary.
+ */
+export function splitBalanced(blocks: string[]): string[][] {
+  const atoms: string[][] = [];
+  let glueNext = false;
+  for (const b of blocks) {
+    const prev = atoms[atoms.length - 1];
+    const attribution = !isHeadingBlock(b) && !isListBlock(b) && !isBoldLabel(b) && wordCount(b) <= 8 && !/[.!?:]["”’)]?$/.test(b.trim());
+    // a list (also a loose one, one item per block) stays whole and with the paragraph that introduces it
+    if (prev && (glueNext || attribution || isListBlock(b))) prev.push(b);
+    else atoms.push([b]);
+    glueNext = isHeadingBlock(b) || isBoldLabel(b) || /:\s*$/.test(b.replace(/[*_]/g, "").trim());
+  }
+  const total = words(blocks);
+  const k = Math.max(1, Math.ceil(total / 280));
+  const target = total / k;
   const parts: string[][] = [];
   let cur: string[] = [];
   let w = 0;
-  for (const b of blocks) {
-    const bw = wordCount(b);
-    if (cur.length && w + bw > MAX_WORDS && w >= MIN_WORDS) {
+  for (const a of atoms) {
+    const aw = words(a);
+    const labelStart = isBoldLabel(a[0]!) && w >= 80;
+    if (cur.length && (labelStart || (w >= 80 && w + aw > target * 1.1))) {
       parts.push(cur);
       cur = [];
       w = 0;
     }
-    cur.push(b);
-    w += bw;
+    cur.push(...a);
+    w += aw;
   }
   if (cur.length) parts.push(cur);
+  const last = parts[parts.length - 1];
+  if (parts.length > 1 && last && words(last) < 60 && !isBoldLabel(last[0]!)) {
+    parts.pop();
+    parts[parts.length - 1]!.push(...last);
+  }
   return parts;
 }
 
+/** One section (or merged group) -> the records it becomes. */
+function explode(blocks: string[], section: string, path: string, events?: SplitEvent[]): Piece[] {
+  const total = words(blocks);
+  const first: Piece = { section, path, blocks };
+  let pieces: Piece[] = [first];
+
+  const faq = toUnits(blocks, isQuestionBlock, (b) => visibleText(b));
+  const sub = toUnits(blocks, isSubHeading, headingText);
+  const introWords = (intro: string[]) => words(intro.filter((b) => !isHeadingBlock(b)));
+  const build = (intro: string[], groups: Unit[][]): Piece[] => {
+    const out: Piece[] = groups.map((g) => {
+      const name = clipName(g.length === 1 ? g[0]!.head : joinNames(g.map((u) => u.head)));
+      return { section: name, path: `${path} › ${name}`, blocks: g.flatMap((u) => u.blocks) };
+    });
+    if (!intro.length || !out.length) return out;
+    // Only the section heading before the first unit: it is already in every unit's breadcrumb.
+    if (introWords(intro) === 0) return out;
+    // A short lead-in stays with the first unit; a real intro keeps the section's own name.
+    if (introWords(intro) < SHORT_WORDS) out[0]!.blocks.unshift(...intro);
+    else out.unshift({ section, path, blocks: intro });
+    return out;
+  };
+
+  if (faq.units.length >= 3) {
+    const keptUnits = faq.units.filter((u) => {
+      const n = substantiveWords({ heading: null, blocks: u.blocks.slice(1) });
+      if (n >= MIN_SUBSTANTIVE_WORDS) return true;
+      events?.push({ kind: "dropped_thin", section: `${section} › ${u.head}`, words: n, text: visibleText(u.blocks.slice(1).join(" ")).slice(0, 120) });
+      return false;
+    });
+    pieces = build(faq.intro, keptUnits.map((u) => [u]));
+    events?.push({ kind: "split_faq", section, words: total, into: pieces.map((p) => p.section) });
+  } else if (sub.units.length >= 2 && total > SUBHEAD_SPLIT_OVER) {
+    const groups: Unit[][] = [];
+    let pack: Unit[] = [];
+    let packWords = 0;
+    const flush = () => {
+      if (!pack.length) return;
+      const prev = groups[groups.length - 1];
+      // a lone small card joins the group before it rather than standing as a fragment
+      if (packWords < SHORT_WORDS && prev) prev.push(...pack);
+      else groups.push(pack);
+      pack = [];
+      packWords = 0;
+    };
+    for (const u of sub.units) {
+      const w = words(u.blocks);
+      if (w >= OWN_RECORD_WORDS) { flush(); groups.push([u]); continue; }
+      if (pack.length && packWords + w > TARGET_MAX_WORDS) flush();
+      pack.push(u);
+      packWords += w;
+    }
+    flush();
+    pieces = build(sub.intro, groups);
+    if (pieces.length > 1) events?.push({ kind: "split_subheadings", section, words: total, into: pieces.map((p) => p.section) });
+  }
+
+  const out: Piece[] = [];
+  for (const p of pieces) {
+    const w = words(p.blocks);
+    if (w <= SPLIT_OVER_WORDS) { out.push(p); continue; }
+    const parts = splitBalanced(p.blocks);
+    const named = parts.map((blocksOfPart, i): Piece => {
+      if (i === 0) return { ...p, blocks: blocksOfPart };
+      const label = isBoldLabel(blocksOfPart[0]!) ? clipName(visibleText(blocksOfPart[0]!)) : "";
+      const name = label || `${p.section} (part ${i + 1})`;
+      return { section: name, path: label ? `${p.path} › ${label}` : `${p.path} (part ${i + 1})`, blocks: blocksOfPart };
+    });
+    if (named.length > 1) events?.push({ kind: "split_long", section: p.section, words: w, into: named.map((x) => `${x.section} (${words(x.blocks)}w)`) });
+    out.push(...named);
+  }
+  return out;
+}
+
+/** HydraDB VARCHAR limits count UTF-8 bytes, not characters ("’" and "™" are three bytes each). */
+const bytes = (s: string) => Buffer.byteLength(s, "utf8");
+
+/** Shorten a section name at a word boundary so it fits `max` BYTES. Never adds an ellipsis. */
+export function clipName(s: string, max = 160): string {
+  let t = s.replace(/\s+/g, " ").trim();
+  if (bytes(t) <= max) return t;
+  while (bytes(t) > max) {
+    const sp = t.lastIndexOf(" ");
+    t = sp > 0 ? t.slice(0, sp) : t.slice(0, -1);
+  }
+  return t.replace(/[\s,;:–—-]+$/, "");
+}
+
 /**
- * One record per H2/H3 section, also for pages under 900 words. Only TINY sections (< TINY_WORDS) are
- * merged with an adjacent section of the same stage + relevance; the merged record is named after its
- * first heading. Sections over MAX_WORDS are split at block boundaries into "(part n)".
+ * One record per topic:
+ *  1. Sections with no usable text (link-only, under MIN_SUBSTANTIVE_WORDS) are dropped.
+ *  2. A family (H2 + its H3 children) whose members are all short cards becomes one record named after the H2.
+ *  3. A short untitled page intro joins the first headed section; label indexes merge forward; untitled
+ *     fragments join the section before them.
+ *  4. FAQ sections become one record per question; sections with H4-H6 sub-headings are split at them;
+ *     anything still over SPLIT_OVER_WORDS is split at paragraph boundaries ("(part n)").
+ * The record's own heading line is not repeated in the body: it is the last element of the breadcrumb.
  */
-export function chunkSections(sections: Section[], _pageTitle?: string): Chunk[] {
-  const kept = sections.filter((s): s is Section & { relevance: "keep" | "uncertain" } =>
-    s.relevance !== "drop" && !isLinkOnly(s) && !isThin(s));
-  type Group = { parts: (Section & { relevance: "keep" | "uncertain" })[]; words: number };
+export function chunkSections(sections: Section[], _pageTitle?: string, opts: ChunkOptions = {}): Chunk[] {
+  const events = opts.events;
+  type Kept = Section & { relevance: "keep" | "uncertain" };
+  const keptAll = sections.filter((s): s is Kept => s.relevance !== "drop" && !isLinkOnly(s) && !isThin(s));
+
+  // 2. families of short cards
+  const kept: Kept[] = [];
+  for (let i = 0; i < keptAll.length; i++) {
+    const s = keptAll[i]!;
+    const kids: Kept[] = [];
+    if (s.level === 2 && s.heading) {
+      for (let j = i + 1; j < keptAll.length; j++) {
+        const c = keptAll[j]!;
+        if (c.level !== 3 || c.parent !== s.heading) break;
+        kids.push(c);
+      }
+    }
+    const family = [s, ...kids];
+    const short = family.every((m) => substantiveWords(m) < FAMILY_MEMBER_WORDS);
+    const uniform = family.every((m) => m.stage === s.stage && m.relevance === s.relevance);
+    if (kids.length >= 2 && short && uniform && words(family.flatMap((m) => m.blocks)) <= TARGET_MAX_WORDS) {
+      kept.push({ ...s, blocks: family.flatMap((m) => m.blocks) });
+      events?.push({ kind: "merged_family", section: s.heading!, members: kids.map((k) => k.heading ?? "") });
+      i += kids.length;
+      continue;
+    }
+    kept.push(s);
+  }
+
+  // 3. grouping
+  type Group = { parts: Kept[]; words: number };
   const groups: Group[] = [];
   const compatible = (g: Group, s: Section) => g.parts[0]!.stage === s.stage && g.parts[0]!.relevance === s.relevance;
-  let carry: Group | null = null; // tiny leading section(s) waiting to merge forward
+  let carry: Group | null = null; // leading section(s) waiting to merge forward
   for (const s of kept) {
     const w = wordCount(s.blocks.join("\n\n"));
     const last = groups[groups.length - 1];
@@ -165,42 +376,62 @@ export function chunkSections(sections: Section[], _pageTitle?: string): Chunk[]
     // Untitled tiny blocks (e.g. text between a stripped heading and the next one) join the previous section;
     // headed sections that passed the substance floor stay their own record (one heading per citation).
     if (w < TINY_WORDS && !s.heading && last && compatible(last, s) && last.words + w <= MAX_WORDS) {
-      last.parts.push(s); // tiny: join the PREVIOUS section, whose heading names the record
+      last.parts.push(s);
       last.words += w;
       continue;
     }
     if (carry && compatible(carry, s)) {
+      const lead = carry.parts.find((p) => !p.heading);
+      if (lead && s.heading) events?.push({ kind: "merged_intro", section: "Overview", into: s.heading, words: carry.words });
       groups.push({ parts: [...carry.parts, s], words: carry.words + w });
       carry = null;
       continue;
     }
     if (carry) { groups.push(carry); carry = null; }
-    if (w < TINY_WORDS && !last) { carry = { parts: [s], words: w }; continue; }
+    if (!last && (w < TINY_WORDS || (!s.heading && w < SHORT_WORDS))) { carry = { parts: [s], words: w }; continue; }
     groups.push({ parts: [s], words: w });
   }
   if (carry) groups.push(carry);
 
+  // 4. records
   const chunks: Chunk[] = [];
   const slugs = new Map<string, number>();
-  const push = (section: string, path: string, blocks: string[], stage: JourneyStage, relevance: "keep" | "uncertain") => {
-    let slug = slugify(path);
-    const n = slugs.get(slug) ?? 0;
-    slugs.set(slug, n + 1);
-    if (n) slug = `${slug}-${n + 1}`;
-    const body = blocks.join("\n\n").trim();
-    chunks.push({ slug, section, sectionPath: path, body, words: wordCount(body), stage, relevance });
-  };
   for (const g of groups) {
     const named = g.parts.find((p) => p.heading) ?? g.parts[0]!;
     const section = named.heading ?? "Overview";
     const path = pathOf(named);
-    const blocks = g.parts.flatMap((p) => p.blocks);
-    const { stage, relevance } = g.parts[0]!;
-    if (g.words <= MAX_WORDS) { push(section, path, blocks, stage, relevance); continue; }
-    splitLarge(blocks).forEach((p, i) => {
-      if (i === 0) return push(section, path, p, stage, relevance);
-      push(`${section} (part ${i + 1})`, `${path} (part ${i + 1})`, [`**${section} (part ${i + 1})**`, ...p], stage, relevance);
-    });
+    const { stage } = g.parts[0]!;
+    const groupRelevance = g.parts[0]!.relevance;
+    const pieces = explode(g.parts.flatMap((p) => p.blocks), section, path, events);
+    for (const p of pieces) {
+      // the record's own heading (or FAQ question) is already the last element of the breadcrumb
+      const lead = p.blocks[0];
+      const blocks = lead !== undefined && (isHeadingBlock(lead) || isQuestionBlock(lead) || isBoldLabel(lead)) && sameText(visibleText(lead), p.section)
+        ? p.blocks.slice(1) : [...p.blocks];
+      // a page-title H1 that names this record (blog headline under its date line) is the breadcrumb too
+      const h1 = blocks.findIndex((b) => /^#\s/.test(b) && sameText(visibleText(b), p.section));
+      if (h1 >= 0) blocks.splice(h1, 1);
+      const body = blocks.join("\n\n").trim();
+      const sub = substantiveWords({ heading: null, blocks });
+      if (sub < MIN_SUBSTANTIVE_WORDS && !isLabelIndex({ heading: null, blocks })) {
+        events?.push({ kind: "dropped_thin", section: p.section, words: sub, text: visibleText(body).slice(0, 120) });
+        continue;
+      }
+      let relevance: "keep" | "uncertain" = groupRelevance;
+      if (pieces.length > 1 && opts.relevanceFor) {
+        const r = opts.relevanceFor(p.blocks.join("\n\n"));
+        if (r === "drop") {
+          events?.push({ kind: "dropped_thin", section: p.section, words: sub, text: "other solution area (partial_scope)" });
+          continue;
+        }
+        relevance = r;
+      }
+      let slug = slugify(p.path);
+      const n = slugs.get(slug) ?? 0;
+      slugs.set(slug, n + 1);
+      if (n) slug = `${slug}-${n + 1}`;
+      chunks.push({ slug, section: p.section, sectionPath: p.path, body, words: wordCount(body), stage, relevance });
+    }
   }
   return chunks;
 }

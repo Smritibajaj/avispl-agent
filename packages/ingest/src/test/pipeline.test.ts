@@ -114,13 +114,14 @@ const para = (n: number, tag: string) => Array.from({ length: n }, (_, i) => `${
 test("split: one record per H2/H3 even on small pages; section is ONE heading; breadcrumb first line", () => {
   const b = buildPageRecords(fakeSource(), fakeRaw(fixture("page-with-boilerplate.md")));
   const sections = b.records.map((r) => r.metadata.section);
-  assert.deepEqual(sections, ["Overview", "Planning widgets", "Widget audio", "Disclaimers"]);
-  assert.match(b.records[3]!.body, /Features depend on licensing/);
+  // the short untitled page intro joins the first headed section instead of standing as "Overview"
+  assert.deepEqual(sections, ["Planning widgets", "Widget audio", "Disclaimers"]);
+  assert.match(b.records[2]!.body, /Features depend on licensing/);
   for (const r of b.records) {
     assert.doesNotMatch(r.metadata.section, / · |…/);
     assert.match(r.body.split("\n")[0]!, /^Widget Rooms › /);
   }
-  assert.equal(b.records[2]!.body.split("\n")[0], "Widget Rooms › Planning widgets › Widget audio");
+  assert.equal(b.records[1]!.body.split("\n")[0], "Widget Rooms › Planning widgets › Widget audio");
   assert.equal(b.records[0]!.metadata.page_title, "Widget Rooms");
 });
 
@@ -169,7 +170,7 @@ test("records: validate against ChunkMetadataSchema, needs_review default, no lo
 });
 
 test("records: Copilot/Places/Teams Premium text forces requires_disclosure", () => {
-  const recs = buildPageRecords(fakeSource(), fakeRaw("# Widget Rooms\n\nInvented text mentioning Microsoft Places for testing.\n")).records;
+  const recs = buildPageRecords(fakeSource(), fakeRaw("# Widget Rooms\n\nInvented text mentioning Microsoft Places for testing, long enough to pass the substance floor of twelve words.\n")).records;
   assert.equal(recs[0]!.metadata.requires_disclosure, true);
 });
 

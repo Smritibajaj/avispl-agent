@@ -129,9 +129,10 @@ export function isDisclaimer(block: string): boolean {
 export type BoilerplateKind =
   | "mega_menu" | "nav_links" | "country_list" | "state_list" | "contact_form" | "footer"
   | "logo_marquee" | "cookie_banner" | "cta_only" | "repeated" | "card_links" | "form" | "duplicate" | "empty_heading"
-  | "cta_block" | "eyebrow" | "counter";
+  | "cta_block" | "eyebrow" | "counter"
+  | "media_fallback" | "blog_nav" | "share_links" | "anchor_nav" | "related_posts" | "logo_caption";
 
-const CTA_LINK_RE = /\b(listen|watch|read|download|connect|contact|book|request|learn|explore|discover|schedule|talk to|get started|register|sign up|find out|view|take a (virtual )?tour|visit|see how|let'?s)\b/i;
+const CTA_LINK_RE = /\b(shop|follow|tell me|listen|watch|read|download|connect|contact|book|request|learn|explore|discover|schedule|talk to|get started|register|sign up|find out|view|take a (virtual )?tour|visit|see how|let'?s)\b/i;
 const linkTexts = (b: string) => [...b.replace(LINKED_IMG_RE, "").replace(IMG_RE, "").matchAll(/\[([^\]]*)\]\([^)]*\)/g)].map((m) => (m[1] ?? "").replace(/[*_]/g, "").trim());
 
 /**
@@ -187,6 +188,44 @@ export function classifyBoilerplate(block: string): BoilerplateKind | null {
   return null;
 }
 
+const MEDIA_FALLBACK_RE = /^(your browser does not support the (video|audio) tag\.?|this is a video titled:.*|flipsnack player)$/i;
+const BLOG_NAV_RE = /^(back to blog|next article|previous article|prev article)$/i;
+const SHARE_RE = /^share (by|on|via) /i;
+const RELATED_HEADING_RE = /^#{2,6}\s+(you may also like|related (posts|articles|resources)|recent posts|more from (the|our) blog)\s*$/i;
+
+/**
+ * Site chrome that is not part of the page's content: player fallback text, blog previous/next links,
+ * share buttons, and in-page anchor menus ("Explore Chicago" -> #chicago). Structure only: a block is chrome
+ * when NOTHING is left outside its links, or when it is one of the fixed player fallback strings.
+ */
+export function classifyChrome(block: string): BoilerplateKind | null {
+  if (/^#{1,6}\s/.test(block)) return null;
+  if (block.split("\n").every((l) => !l.trim() || MEDIA_FALLBACK_RE.test(visibleText(l)))) return "media_fallback";
+  const links = linkTexts(block);
+  if (!links.length || stripLinks(block).replace(/[-+|·•]/g, "").trim()) return null;
+  if (links.every((t) => BLOG_NAV_RE.test(t))) return "blog_nav";
+  if (links.every((t) => SHARE_RE.test(t))) return "share_links";
+  const lines = block.split("\n").filter((l) => l.trim());
+  const urls = [...block.matchAll(/\]\(([^)\s]*)/g)].map((m) => m[1] ?? "");
+  if (lines.length >= 3 && lines.every((l) => /^\s*[-*+]\s/.test(l)) && urls.length === lines.length && urls.every((u) => /#[\w-]+$/.test(u)))
+    return "anchor_nav";
+  return null;
+}
+
+/**
+ * Markup repairs that change no words: link cards rendered as "[\\ + newline + **Label**](url)" become
+ * "[Label](url)", and a bold drop-cap split from its word ("**W** hat") is joined again.
+ */
+export function repairMarkup(md: string): string {
+  return md
+    .replace(/\[(?:\\+[ \t]*\n[ \t]*)+\*\*([^*\n]+)\*\*\]\(/g, "[$1](")
+    .replace(/(^|\n)\*\*([A-Za-z])\*\*[ \t]+(?=[a-z])/g, "$1$2")
+    // a whole card wrapped in a link to an in-page anchor ("[**Title** \\ \\ text](page/#contact)"): keep its text
+    .replace(/\[(\*\*[^*\n]+\*\*)[ \t]*(?:\\+[ \t]*\n[ \t]*)+([^\]\n]+)\]\([^)\s]*#[\w-]+\)/g, "$1 $2")
+    // an empty strikethrough left by the editor ("~~~~")
+    .replace(/[ \t]*~~~~(?=[ \t]*$)/gm, "");
+}
+
 /** Normalised fingerprint of a block for the cross-page repeated-block heuristic. */
 export const blockKey = (block: string): string =>
   createHash("sha1").update(visibleText(block).toLowerCase()).digest("hex").slice(0, 16);
@@ -235,13 +274,37 @@ export function cleanMarkdown(md: string, repeated: Set<string> = new Set()): Cl
 
   // pass 1: per-block structural classification
   let kept: string[] = [];
-  for (const raw of toBlocks(md)) {
-    const kind = classifyBoilerplate(raw) ?? (repeated.has(blockKey(raw)) && !isHeading(raw) && !isDisclaimer(raw) ? "repeated" : null);
+  for (const raw of toBlocks(repairMarkup(md))) {
+    const kind = classifyBoilerplate(raw) ?? classifyChrome(raw) ?? (repeated.has(blockKey(raw)) && !isHeading(raw) && !isDisclaimer(raw) ? "repeated" : null);
     if (kind) { drop(kind, raw); continue; }
     // strip inline images and linked images; keep the rest of the block
-    const block = normalizeHeadingLine(raw.replace(LINKED_IMG_RE, "").replace(IMG_RE, "").replace(/[ \t]+$/gm, ""));
+    const block = normalizeHeadingLine(repairMarkup(raw.replace(LINKED_IMG_RE, "").replace(IMG_RE, "")).replace(/[ \t]+$/gm, ""));
     if (!block.trim() || !visibleText(block)) continue;
     kept.push(block);
+  }
+
+  // pass 1b: "You may also like" teaser lists (heading + everything up to the next H1-H3), and the caption of a
+  // logo strip whose images are already gone ("Partners" + one short line, then a heading or the end).
+  {
+    const out1: string[] = [];
+    for (let i = 0; i < kept.length; i++) {
+      const b = kept[i]!;
+      if (RELATED_HEADING_RE.test(b)) {
+        drop("related_posts", b);
+        while (i + 1 < kept.length && !/^#{1,3}\s/.test(kept[i + 1]!)) drop("related_posts", kept[++i]!);
+        continue;
+      }
+      const next = kept[i + 1];
+      const after = kept[i + 2];
+      if (/^#{4,6}\s+partners\s*$/i.test(b) && next && !isHeading(next) && wordCount(next) <= 8 && (!after || isHeading(after))) {
+        drop("logo_caption", b);
+        drop("logo_caption", next);
+        i++;
+        continue;
+      }
+      out1.push(b);
+    }
+    kept = out1;
   }
 
   // pass 2: form regions (one label per block): >=3 field labels within 6 blocks
@@ -339,6 +402,45 @@ export function cleanMarkdown(md: string, repeated: Set<string> = new Set()): Cl
   }
   flushItems();
   return { markdown: out.join("\n\n").trim() + "\n", removed };
+}
+
+// ---------- PDF page text ----------
+
+const PDF_NOISE_LINE_RE = /^(<!--\s*page \d+\s*-->|\d{1,2}(?: \d{1,2})*|>\s*\S.*|follow avi-spl|subscribe|enews podcast)$/i;
+
+/**
+ * Drop a run of whole lines that repeats text already present earlier on the page (pull quotes that the PDF
+ * prints twice). The run must start at a line start, end at a line end, and repeat at least `minWords` words.
+ */
+export function dropRepeatedRuns(lines: string[], minWords = 10): string[] {
+  const toks: { w: string; line: number }[] = [];
+  lines.forEach((l, line) => { for (const w of l.toLowerCase().split(/[^a-z0-9’']+/).filter(Boolean)) toks.push({ w, line }); });
+  const lineStart = new Map<number, number>();
+  const lineEnd = new Map<number, number>();
+  toks.forEach((t, i) => { if (!lineStart.has(t.line)) lineStart.set(t.line, i); lineEnd.set(t.line, i); });
+  const dropLines = new Set<number>();
+  for (const [line, start] of lineStart) {
+    if (dropLines.has(line)) continue;
+    let best = 0;
+    for (let p = 0; p < start; p++) {
+      if (toks[p]!.w !== toks[start]!.w) continue;
+      let n = 0;
+      while (p + n < start && start + n < toks.length && toks[p + n]!.w === toks[start + n]!.w) n++;
+      if (n > best) best = n;
+    }
+    if (best < minWords) continue;
+    const last = toks[start + best - 1]!;
+    if (lineEnd.get(last.line) !== start + best - 1) continue; // must end at a line end
+    for (let l = line; l <= last.line; l++) dropLines.add(l);
+  }
+  return lines.filter((_, i) => !dropLines.has(i));
+}
+
+/** Clean the extracted text of ONE PDF page: page markers, glyph artefacts, lone figure numbers, ">CTA" lines, repeated pull quotes. */
+export function cleanPdfPageText(text: string): string {
+  const lines = text.replace(/\r\n?/g, "\n").replace(/[\u0332\u0333]+/g, "").split("\n")
+    .map((l) => l.replace(/\s+$/, "")).filter((l) => l.trim() && !PDF_NOISE_LINE_RE.test(l.trim()));
+  return dropRepeatedRuns(lines).join("\n").trim();
 }
 
 // ---------- heading repair from the DOM ----------
