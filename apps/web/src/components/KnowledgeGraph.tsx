@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import graphJson from "../lib/kb-graph.json";
-import { BrandLogo } from "./BrandLogo";
 
 /** Journey stages in customer order. Colour follows the stage, never its position in a filtered list. */
 const STAGES = [
@@ -128,7 +127,6 @@ export function KnowledgeGraph() {
     <div className="kg">
       <header className="topbar">
         <div className="topbar-left">
-          <BrandLogo className="brand-logo" height={20} />
           <span className="topbar-title">Knowledge graph</span>
         </div>
         <Link className="kg-back" href="/">
