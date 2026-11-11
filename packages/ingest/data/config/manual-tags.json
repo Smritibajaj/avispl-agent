@@ -1,0 +1,197 @@
+{
+  "_note": "Room-size tags added by hand (owner request 2026-11-11) where a record describes a room or product for a room size without using the words the tagger looks for. Tags only steer search filters: they are never shown or stated to the customer. Keyed by record id; added to whatever the tagger found.",
+  "tags": {
+    "98533225eab104f8ef0e401ab27b474576da9c35": {
+      "room_sizes": [
+        "huddle",
+        "small"
+      ],
+      "why": "Showroom seats four",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Dallas"
+    },
+    "4c6406b66c204be0b089ee748ecb2ef91be42392": {
+      "room_sizes": [
+        "medium"
+      ],
+      "why": "Team meeting room design built around a Logitech Rally Bar",
+      "record": "Sustainability Screened Meeting Rooms › Team Meeting Room Reference Design"
+    },
+    "b98cd48a593520897d691c687ecae89dedcb3671": {
+      "room_sizes": [
+        "huddle",
+        "small"
+      ],
+      "why": "Showroom seats four",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Denver"
+    },
+    "ffdd4c4100dde1feb1309267312bd33af19da9a8": {
+      "room_sizes": [
+        "huddle",
+        "small"
+      ],
+      "why": "Showroom seats four",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Detroit"
+    },
+    "150d2324b5e20b913632d70608fa309da49d4385": {
+      "room_sizes": [
+        "huddle",
+        "small"
+      ],
+      "why": "Showroom seats four",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL South Florida"
+    },
+    "736d60b92a7fa12cd583322178503db6e8317e12": {
+      "room_sizes": [
+        "huddle",
+        "small"
+      ],
+      "why": "Showroom seats four",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Dublin"
+    },
+    "5ebbc091448bcf85556f0e9e4a497e52bd2822a8": {
+      "room_sizes": [
+        "small"
+      ],
+      "why": "Showroom seats six",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Kansas City"
+    },
+    "087232540678219bb4fc81bfc6d80ab80ca6dc87": {
+      "room_sizes": [
+        "medium"
+      ],
+      "why": "Showroom seats up to eight",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Houston"
+    },
+    "ad01560a1450e55d9e794bf4c5932227b3472b9a": {
+      "room_sizes": [
+        "medium"
+      ],
+      "why": "Showroom seats eight",
+      "record": "Signature Microsoft Teams Room Experience Tours › AVI-SPL Chicago"
+    },
+    "48de0c2a5316991323a4d33f02595694ccebbffa": {
+      "room_sizes": [
+        "small"
+      ],
+      "why": "65-inch all-in-one board for meeting rooms and open spaces",
+      "record": "Logitech audio visual collaboration technology available through AVI-SPL › RALLY BOARD 65"
+    },
+    "b85a772adbb60ead3f4d5574e59446187f850caf": {
+      "room_sizes": [
+        "small",
+        "medium"
+      ],
+      "why": "TeamConnect Bar S and M family",
+      "record": "Sennheiser audio visual collaboration technology available from AVI-SPL › TEAMCONNECT BAR SOLUTIONS"
+    },
+    "dd290eff2034d259c16cfc5d6173af3351c55ea0": {
+      "room_sizes": [
+        "small",
+        "medium"
+      ],
+      "why": "TeamConnect Bar S and M family",
+      "record": "Sennheiser audio visual collaboration technology available from AVI-SPL › FLEXIBLE EFFICIENT SETUP"
+    },
+    "0d2c93681ca4015209f2b5c0dfd63ff40f4b0dce": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Auditoriums and lobby spaces",
+      "record": "National Bank of Canada Case Study › Shifting work trends spark tech upgrades and expert support needs"
+    },
+    "b41ff6eb8cf62b8611d58249aa2058664924fec7": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Auditoriums",
+      "record": "National Bank of Canada Case Study › Customizing AV tech for inviting, intuitive gathering spaces"
+    },
+    "7f7eaf63116ad3e8dadd54c670a7494f702a097a": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Auditoriums",
+      "record": "Concept Catalog 2025 Winter › National Bank of Canada: intuitive and standardized AV/UC tech powers new Montreal HQ vision (p. 24)"
+    },
+    "0082c56ec6f5694c5ab86f32b31de27302494e9a": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Large integrated audio rooms and an auditorium",
+      "record": "AVI-SPL's collaboration space case study with 7-Eleven › Action: Build Trust, Work as a Team (part 3)"
+    },
+    "6dd1917fcfa8f259db3879183aa574a1eef65969": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Boardroom with moveable furniture",
+      "record": "TPA Enhances Employee Experience with collaboration technology › Collaboration, video conferencing and video wall solutions"
+    },
+    "c587ada15b385dbfbfb130480efdb32eabf74145": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Large combined Experience Room",
+      "record": "CBRE Berlin Case Study › Challenge"
+    },
+    "4ec8309511f8b4fee268987752ee51bfe8fd5eba": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Divisible spaces",
+      "record": "Case study on multinational bank integrating its new HQ with collaboration solutions › Action:"
+    },
+    "99599b9bc382fbc7a41b95eabf8a9758071f9b4b": {
+      "room_sizes": [
+        "large",
+        "classroom"
+      ],
+      "why": "Tiered lecture hall",
+      "record": "Concept Catalog 2024-2025 Winter update › VR Validates AV over IP Solutions at Rose State College (p. 40)"
+    },
+    "d048778e44ededb177b740ecab4dded7a29578ea": {
+      "room_sizes": [
+        "large",
+        "classroom"
+      ],
+      "why": "Lobby, lecture hall or meeting room display",
+      "record": "LG audio visual collaboration technology available from AVI-SPL › All-in-One DVLED"
+    },
+    "9a0cf75a9c8322baa05c4e1735e45ca78439e6a1": {
+      "room_sizes": [
+        "large"
+      ],
+      "why": "Auditoriums and large venues",
+      "record": "LG audio visual collaboration technology available from AVI-SPL › LG MAGNIT Micro LED; Experts and Eco Systems Partners"
+    },
+    "3aade30f8dcf3ed6227e0782a22ebb9088520c40": {
+      "room_sizes": [
+        "classroom"
+      ],
+      "why": "Hybrid classrooms and training rooms",
+      "record": "Shure › Microflex Ecosystem; MXW neXt (2/4/8 channel); IntelliMix™️ Room Kits; Networked Loudspeakers; MXA902 Ceiling Array + Loudspeaker; ShureCloud"
+    },
+    "640a140a0a83944ca5d64728c6d80880a64fbb7c": {
+      "room_sizes": [
+        "classroom"
+      ],
+      "why": "Lecture spaces",
+      "record": "Sennheiser audio visual collaboration technology available from AVI-SPL › Overview"
+    },
+    "c663f0192781c896f473d2358a035e322faa30f0": {
+      "room_sizes": [
+        "small"
+      ],
+      "why": "Smaller financial spaces",
+      "record": "Getting Collaboration Spaces Right in Financial Services › Equip Smaller Financial Spaces for Hybrid Meetings"
+    },
+    "a08a064553e9891dafc56af1221874f4c1f9c572": {
+      "room_sizes": [
+        "large",
+        "classroom"
+      ],
+      "why": "Classrooms and auditoriums listed among designed spaces",
+      "record": "Design and Planning › Create meaningful experiences with collaboration technology"
+    }
+  }
+}

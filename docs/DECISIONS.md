@@ -136,3 +136,10 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 - Still unavailable: the five reference-design pictures carry no legible labels, capacities or equipment, so no record is made from images; the Reference Designs PDF (404) and the standardisation eBook (form) are still missing. Room-size and industry tags stay sparse because the records' own text rarely states them.
 - Vocabulary gaps noted, not added: vendors jabra, planar, sony, epson, samsung.
 - The app has a `/graph` page: sources linked to journey stages, platforms, vendors and topics, built from record tags by `pnpm --filter @avispl/web graph:build` (re-run after every ingest). It is not HydraDB's extracted entity graph.
+
+### Room sizes (2026-11-11, evening)
+
+- The five reference-design pictures hold no text (checked in the raw scrape: an image slider only), so the expert cannot name a design per room size from them. Owner left the handling to us: nothing is invented.
+- The expert now runs one search per room size the customer names (room_size filter) and says what is published for each size and whose statement it is (ours or the vendor's). A gap never leads an answer; it is named once after what we do have.
+- Room-size tags added by hand for 26 records whose text describes a room or product for a size without the tagger's words (showrooms by seat count, bar products, auditoriums, lecture halls): `packages/ingest/data/config/manual-tags.json`, applied by `prepare.ts` on every build. Records with a room size: 39 -> 63 of 364. Tags steer search filters only; record text is unchanged. The 25 changed records were upserted to the dev database.
+- No industry tags were added by hand: the field holds one value and the untagged records that mention a sector mention several.

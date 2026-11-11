@@ -21,9 +21,9 @@ import {
 import { MIN_SUBSTANTIVE_WORDS, chunkSections, clipName, isLinkOnly, isThin, parseSections, substantiveWords, stableId, withBreadcrumb, type Chunk, type SplitEvent } from "./split";
 import { applyRelations } from "./relations";
 import { TAG_FIELDS, detectIndustry, detectStage, tagInputFromBody, tagRecord, type RecordTags } from "./tagger";
-import { splitList } from "@avispl/shared";
+import { ROOM_SIZES, splitList } from "@avispl/shared";
 import type { PdfExtract } from "./pdf";
-import { DATA_DIR, PDF_DIR, RAW_DIR, REPORTS_DIR, REVIEW_DIR } from "./paths";
+import { CONFIG_DIR, DATA_DIR, PDF_DIR, RAW_DIR, REPORTS_DIR, REVIEW_DIR } from "./paths";
 import { PREP, prepRaw } from "./new-prep";
 
 /** Sources numbered from here on (added 2026-11-11) get the page-specific repairs of new-prep.ts before cleaning. */
@@ -86,6 +86,26 @@ export function stageForRecord(m: Pick<MetaInput, "source" | "stage" | "body" | 
   if (m.source.contentType === "case_study" || m.source.derivedFrom) return m.stage;
   if (m.stage === "proof" && m.source.contentType !== "industry_page") return m.stage;
   return detectStage(tagInputFromBody(m.body, m.pageTitle))?.stage ?? m.stage;
+}
+
+/**
+ * Room-size tags added by hand in data/config/manual-tags.json (keyed by record id), merged with what the tagger
+ * found. They steer search filters only; the record text is untouched. An id that no longer exists is ignored.
+ */
+export async function applyManualTags(records: IngestRecord[]): Promise<number> {
+  const file = join(CONFIG_DIR, "manual-tags.json");
+  if (!existsSync(file)) return 0;
+  const { tags } = JSON.parse(await readFile(file, "utf8")) as { tags: Record<string, { room_sizes?: string[] }> };
+  let n = 0;
+  for (const r of records) {
+    const add = tags[r.id]?.room_sizes;
+    if (!add?.length) continue;
+    const have = new Set([...splitList(r.metadata.room_sizes), ...add]);
+    const merged = ROOM_SIZES.filter((v) => have.has(v)).join(",");
+    if (merged !== r.metadata.room_sizes) n++;
+    r.metadata.room_sizes = merged;
+  }
+  return n;
 }
 
 export function buildMetadata(m: MetaInput): ChunkMetadata {
@@ -481,6 +501,7 @@ async function main() {
   records.length = 0;
   records.push(...dedupe.kept);
 
+  await applyManualTags(records);
   const unresolved = applyRelations(records);
   const approvals: Approvals = existsSync(APPROVALS_FILE) ? await readJson<Approvals>(APPROVALS_FILE) : {};
   const published = applyApprovals(records, approvals);
