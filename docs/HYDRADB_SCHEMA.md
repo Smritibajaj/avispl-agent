@@ -234,24 +234,6 @@ Fields are matched to answers by the wording of the question the advisor asked, 
 
 Personal data: keep access to this database limited, the booking form tells customers it is saved, and one profile is deleted with `pnpm hydra clients:delete --chat=<chat id>`. Still to decide before production: how long profiles are kept and who may read them. The advisor does not read profiles back.
 
-### Manual tags
-`packages/ingest/data/config/manual-tags.json` adds `room_sizes`, `platforms` or `vendors` to single records (keyed by record id) when the text does not use the words the tagger looks for. Tags only steer search filters; they are never shown to the customer. Each entry needs a `why`.
-
-## 10b. Client profiles (second collection)
-
-Owner decision 2026-11-11: what a customer tells the advisor is stored in the DEV database, collection `client-profiles` (`packages/hydra/src/client-profiles.ts`).
-
-| Point | Value |
-|---|---|
-| When | When the advisor delivers a plan (its answer carries the booking button), and again when the customer sends the "Book a meeting" form. |
-| Item id | `client-<chatId>`: one item per conversation, later saves replace it (upsert). |
-| Body | Markdown: contact block (only after a meeting request: name, work email, company, region, best time, notes) and the question and answer pairs. |
-| Metadata | Same 22 fields. `content_type: client_profile` (outside the knowledge vocabulary on purpose), `status: needs_review`, `meeting_room_relevant: false`, `page_title: Client profile`, `section: Intake answers` or `Meeting requested`, `cs_organization` = company, `cs_location` = region. |
-| Safety | Different collection, and the hard filters would exclude these items anyway, so a profile can never be returned as evidence. Writes are refused for any database other than `avispl_meeting_room_dev` (or the local mock). |
-| Fallback | Every save is also one `[client-profile]` log line. With `KNOWLEDGE_BACKEND=mock` only the log line is written. |
-
-This collection holds personal data (name, work email). Keep database access limited, tell customers it is saved (the booking form does), and delete a profile on request by its id. The advisor does not read profiles back yet: they are for the AVI-SPL team.
-
 ## 11. Changing the schema safely
 
 | Change | Possible? | How |
