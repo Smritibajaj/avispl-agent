@@ -123,7 +123,6 @@ h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
 .side-empty { padding: 6px 10px; margin: 0; font-size: 0.82rem; color: var(--side-muted); }
 .side-chat { display: flex; align-items: center; border-radius: 8px; }
 .side-chat:hover, .side-chat.is-current { background: var(--side-hover); }
-.side-chat.is-current { box-shadow: inset 3px 0 0 var(--teal); }
 .side-chat-open { flex: 1; min-width: 0; padding: 8px 10px; border: 0; background: transparent; text-align: left; font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; border-radius: 8px; }
 .side-chat-delete { flex: none; display: inline-flex; align-items: center; justify-content: center; width: 30px; height: 30px; margin-right: 3px; border: 0; border-radius: 6px; background: transparent; color: var(--side-muted); cursor: pointer; opacity: 0; }
 .side-chat:hover .side-chat-delete, .side-chat:focus-within .side-chat-delete { opacity: 1; }
