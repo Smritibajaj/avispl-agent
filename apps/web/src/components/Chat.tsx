@@ -1,7 +1,6 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
-import Link from "next/link";
 import { DefaultChatTransport } from "ai";
 import { useCallback, useEffect, useMemo, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { GOLDEN_QUERIES } from "../lib/golden-queries";
@@ -74,7 +73,6 @@ const ICON = {
   trash: "M3 6h18M8 6V4h8v2M19 6l-1 14H6L5 6",
   sun: "M12 3v2M12 19v2M5 5l1.5 1.5M17.5 17.5 19 19M3 12h2M19 12h2M5 19l1.5-1.5M17.5 6.5 19 5M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8z",
   moon: "M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z",
-  graph: "M6 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM18 8a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM12 20a2 2 0 1 0 0-4 2 2 0 0 0 0 4zM8 6h8M7 7.7l4 8.6M17 7.7l-4 8.6",
   down: "M12 5v14M5 12l7 7 7-7",
 };
 
@@ -253,10 +251,6 @@ export function Chat({
           {chats.length === 0 && <p className="side-empty">Your chats will appear here. They are saved in this browser only.</p>}
         </div>
 
-        <Link className="side-item side-link" href="/graph">
-          <Icon d={ICON.graph} size={18} />
-          Knowledge graph
-        </Link>
         <button type="button" className="side-item side-theme" onClick={toggleTheme}>
           <Icon d={theme === "dark" ? ICON.sun : ICON.moon} size={18} />
           {theme === "dark" ? "Light mode" : "Dark mode"}

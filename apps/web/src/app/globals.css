@@ -283,8 +283,6 @@ h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
 .kg-table table { border-collapse: collapse; width: 100%; min-width: 760px; }
 .kg-table th, .kg-table td { text-align: left; vertical-align: top; padding: 7px 12px; border-bottom: 1px solid var(--line); }
 .kg-table th { font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); background: var(--surface); }
-.side-link { text-decoration: none; color: var(--side-text); }
-.side-link:hover { color: var(--side-text); }
 @media (max-width: 900px) {
   .kg-body { grid-template-columns: minmax(0, 1fr); }
   .kg-detail { position: static; max-height: none; }
