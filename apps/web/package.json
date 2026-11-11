@@ -9,7 +9,8 @@
     "start": "next start",
     "typecheck": "tsc --noEmit",
     "test": "LICENSING_DISCLOSURE=on tsx --tsconfig tsconfig.test.json --test \"src/**/*.test.ts\"",
-    "trace": "node scripts/trace-sources.mjs"
+    "trace": "node scripts/trace-sources.mjs",
+    "graph:build": "node scripts/build-kb-graph.mjs"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "4.0.99",

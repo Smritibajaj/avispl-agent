@@ -125,3 +125,14 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 - Fallback when no search returns anything (owner wording): "Sorry, I can't answer that right now. Please share your email and our team will reach out to you shortly." After they send an email: "Thank you. Our team will reach out to you shortly."
 - Owner decision: that email is written only to the server log, as a `[contact-request]` line with the unanswered question. Nothing is emailed or stored elsewhere, so someone has to read the Vercel logs.
 - While an answer is prepared the chat shows a spinner with a status line, and after 12 s adds that it is taking longer than usual.
+
+### Knowledge-base clean-up and new sources (2026-11-11, afternoon)
+
+- Owner approved cleaning the existing records, scraping more avispl.com pages (15 Firecrawl scrapes used) and reloading the dev database.
+- Dev database `avispl_meeting_room_dev` now holds 364 published records from 67 sources (was 251 from 54): plan_design 49, choose_platform 150, deploy 29, run_support 51, proof 85. `pnpm ingest records` builds the full set.
+- Clean-up rules: one topic per record (PDFs per page, FAQs per question, nothing over 400 words), duplicates and fact-free records dropped, navigation, share links and repeated headings removed, tab labels re-paired with their panels. Source text is never reworded. Details: `packages/ingest/data/reports/refine-report.md` (local).
+- 14 new sources: design and planning, Teams Rooms Express Install, implementation support, end-user training, onsite and enterprise managed services, enterprise maintenance, the standardisation eBook's public landing text, three blogs, and the Heriot-Watt and RMIT case studies.
+- Reload order is always: upsert new and changed records, wait until indexed, then `pnpm hydra delete-stale --previous <old records file>`. The live site reads this database.
+- Still unavailable: the five reference-design pictures carry no legible labels, capacities or equipment, so no record is made from images; the Reference Designs PDF (404) and the standardisation eBook (form) are still missing. Room-size and industry tags stay sparse because the records' own text rarely states them.
+- Vocabulary gaps noted, not added: vendors jabra, planar, sony, epson, samsung.
+- The app has a `/graph` page: sources linked to journey stages, platforms, vendors and topics, built from record tags by `pnpm --filter @avispl/web graph:build` (re-run after every ingest). It is not HydraDB's extracted entity graph.
