@@ -13,7 +13,9 @@
     "records": "tsx src/prepare.ts",
     "publish": "tsx src/publish.ts",
     "tags:explain": "tsx src/scripts/tag-explain.ts",
-    "disclosure:extract": "tsx src/extract-disclosure.ts"
+    "disclosure:extract": "tsx src/extract-disclosure.ts",
+    "knowledge:bundle": "tsx src/scripts/knowledge-bundle.ts",
+    "knowledge:build": "tsx src/scripts/knowledge-build.ts"
   },
   "dependencies": {
     "@avispl/shared": "workspace:*",

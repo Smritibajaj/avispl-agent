@@ -1,0 +1,11 @@
+{
+  "sourceId": "concept-catalog-2024-25",
+  "stage": "run_support",
+  "slug": "symphony-cloud-migration-and-planning",
+  "section": "AVI-SPL Symphony: cloud migration support and data-driven workplace technology planning",
+  "body": "The Concept Catalog describes AVI-SPL Symphony as a user experience management platform that connects, monitors and tracks collaboration technology across the digital workplace. Alongside day-to-day management, the article presents it as a support for moving to cloud collaboration technologies and for planning technology and space with data.\n\n### Enable cloud migration\n- **Meeting and device monitoring**: cloud technologies get the same support as AV and legacy technologies. Rooms can be scheduled from Outlook, OS telemetry of cloud room computers is monitored, and live meeting support is delivered when needed.\n- **Self-healing**: aspects of devices such as volume are controlled remotely, and stationary PCs can be rebooted remotely when issues arise or as a standard process.\n\n### Data-driven technology planning\nSymphony tracks how meeting spaces are used and how technology performs, giving data on space capacity, technology condition and collaboration adoption.\n- **Workplace management**: a strategic view of space and overall footprint, covering how technology is deployed, the room types and their capacity, to inform repurposing space for a hybrid workforce.\n- **Success metrics**: metrics for assets, cloud migration, monitoring, incident management and workplace management, presented in visual interactive dashboards.\n\nThe article says this data leaves an organization better placed to adapt to changing technology trends and market demands.\n\n**When to use this**: a customer moving rooms to cloud collaboration platforms who asks how those rooms will be monitored and supported, or one who wants usage and capacity data to plan space for hybrid work.\n\n**Not stated in this source**: which cloud platforms are covered, prices and service levels.",
+  "basedOn": [
+    "26af3eb766840588193e939057ddd7807eb500df",
+    "bd9a15ab0188cd50dfa8565b203075c9af0b9fcc"
+  ]
+}

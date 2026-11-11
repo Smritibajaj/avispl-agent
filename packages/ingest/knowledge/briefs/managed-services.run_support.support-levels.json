@@ -1,0 +1,11 @@
+{
+  "sourceId": "managed-services",
+  "stage": "run_support",
+  "slug": "support-levels",
+  "section": "AVI-SPL Managed Services: the support levels for running AV and unified communications technology",
+  "body": "AVI-SPL Managed Services is the offer under which AVI-SPL's team manages a customer's audio visual and unified communications ecosystem on the customer's behalf. The page says certified technicians support and manage the technology, so the customer saves time and its own staff can concentrate on strategic initiatives. A customer chooses among several support levels.\n\n**What to know**\n\n- **Managed Services.** AVI-SPL's solutions architects, engineering expertise and experience are used to design and plan collaboration technology solutions and infrastructure. AVI-SPL provides discovery, assessment and roadmap development.\n- **Enterprise Managed Services.** Covers audio-visual (AV), digital signage and unified communications (UC) technology. AVI-SPL manages the technology in rooms and in the cloud, throughout the modern workplace and public spaces.\n- **Onsite Managed Services.** For customers who want someone on site every day to help manage their technology. Dedicated technicians can be provided by AVI-SPL, on call for up to twenty-four hours a day, seven days a week.\n- **Asset Inventory Services (AIS).** A subscription service that provides lifecycle tracking of AV and UC physical assets, furniture, consumables and contractual assets. Its stated aims are to help IT improve efficiency, reduce risk and enhance the user experience.\n\n**When to use this**\n\nUse it when a customer asks who will look after the rooms once they are installed, what managed service options AVI-SPL has, whether AVI-SPL can place technicians on site, or how AV and UC assets can be tracked through their lifecycle.\n\n**Not stated in this source:** prices, response times or other service level commitments, help desk hours and contact channels, the certifications the technicians hold, and contract terms.",
+  "basedOn": [
+    "c329a62c2c7e316f69b6f6120804587c3b7e1fb5",
+    "36e8426927d5774751a230ec963848d5f93a60fd"
+  ]
+}

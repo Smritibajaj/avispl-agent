@@ -1,0 +1,16 @@
+{
+  "sourceId": "enterprise-managed-services",
+  "stage": "run_support",
+  "slug": "scope-and-operating-model",
+  "section": "Enterprise Managed Services: what AVI-SPL manages across the collaboration ecosystem and how the model works",
+  "body": "Enterprise Managed Services (EMS) is AVI-SPL's offer to take over the ongoing management of a customer's collaboration technology: one partner for AV, UCC and digital signage throughout the technology lifecycle. It matters at the run-and-support stage for organizations that want proactive service and 24/7 expert support while their own team stays informed and in control without daily hands-on work.\n\n**What to know**\n- AVI-SPL manages, monitors and maintains the collaboration ecosystem and uses service insight to improve performance and inform next steps.\n- The service is described as going beyond rooms and devices, giving more visibility and governance over the technologies and services the IT team supports.\n- The operating model is presented as one model, end to end. The collaboration ecosystem it covers: Rooms, Devices, Users, UCC Platforms, Cloud Services and Workplace Technology. What the service is meant to provide: Performance, Governance, Visibility and Improvement.\n- Operations are grouped into Technology Ecosystem (the collaboration technology teams use, under coordinated management), Service Operations (the ongoing service work from support through maintenance) and Performance and Improvement (how the ecosystem is performing and where to focus improvements).\n\n**Service functions included**\nThe page says these are brought together to cut the number of separate tasks falling to IT:\n- Managed Onboarding\n- UCC & Cloud Administration\n- Service Delivery Management\n- Reporting & Service Reviews\n- Change Management\n- 24/7 Technical Support\n\n**Awareness across the ecosystem**\nThe model keeps a current view of asset status and service activity so the customer's team can address issues sooner and prioritize. The page pairs each activity with a capability:\n- Know: Asset Inventory\n- Monitor: Device Monitoring\n- Control: Configuration Management\n- Administer: Cloud Administration\n- Resolve: Incident & Problem Management\n- Maintain: Preventive Maintenance\n- Measure: Reporting and Analytics\n- Optimize: Ongoing Service Management\n\n**EMS Operating Model cycle**\nThe page shows the sequence SLA, Monitor, Report, Review, Optimize.\n\n**When to use this**\nFor customers asking what a fully managed service for meeting rooms and collaboration platforms covers, whether AVI-SPL handles cloud and UCC administration as well as rooms, or how monitoring, maintenance and reporting fit together.\n\n**Not stated in this source**\nNo prices, contract terms or response-time targets are given in these sections.",
+  "basedOn": [
+    "8e448000cb35dc2544f4fae0f6d2ad0da653c351",
+    "8da520b3f16a094eaa91f86856f91783bbc74a9c",
+    "e52c5873c668b7415f417f19407f267ad89916a0",
+    "ce2cec357e537b43cfdc852bef9523a1817b72b8",
+    "3dd945e1234cadd39e15372578247f01aa045eab",
+    "0f69d091fbb6f330c67e616c9f260f1b2c8cd4bc",
+    "fdbd711bba4776aafd7f7a894000c3df627490d3"
+  ]
+}

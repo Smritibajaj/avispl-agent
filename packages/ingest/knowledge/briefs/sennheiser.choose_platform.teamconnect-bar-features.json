@@ -1,0 +1,13 @@
+{
+  "sourceId": "sennheiser",
+  "stage": "choose_platform",
+  "slug": "teamconnect-bar-features",
+  "section": "Sennheiser TeamConnect Bar S and Bar M: audio, video, setup, management, certifications and security",
+  "body": "Feature detail for the Sennheiser TeamConnect Bar Solutions (TC Bar Solutions), the all-in-one bars for hybrid meetings available from AVI-SPL. Use it when a customer needs to know what the bars do and what they work with.\n\n**Certification and compatibility**\n\n- Certified for Microsoft Teams and Zoom.\n- The page calls the bars compatible with and certified for major UC platforms like Microsoft Teams and Zoom, and compatible with many major third-party media control systems.\n\n**Audio**\n\n- Full-range stereo speakers with an improved directivity pattern and optimized passive radiators, aimed at natural speech and high intelligibility.\n- Integrated beamforming lets everyone be heard clearly, handles the transition between presenters, and leaves people free to move and to configure the space as they wish.\n\n**Video**\n\n- A 4K Ultra-HD camera. The page says it has been checked and improved by an independent video partner, which it does not name.\n- AI features \"Autoframing\" and \"Person Tiling\" (also written as auto framing and person tiling) so that all participants can be seen.\n\n**Setup and scaling**\n\n- Plug-and-play capabilities.\n- The page describes the product as the first all-in-one audio and video bar on the market with integrated Dante.\n- It scales by using Dante to add extension mics, or a USB connection for a second external camera.\n- Built-in DSP in both Bars, PoE, and a single cable mode available for Bar S cut clutter and simplify installation.\n- A bar mount and multiple mounting options suit different room set-ups and designs.\n\n**Management**\n\n- Sennheiser Control Cockpit allows preconfigured adjustments based on the mounting position.\n- Exclusion Zones shut out unwanted noises; the Priority Zone gives priority to a presenter or a podium area.\n\n**Security**\n\n- Password protected configuration.\n- Encrypted communication with TLS 1.2, described as in line with industry best practices.\n- An included lens cap for extra privacy.\n\n**When to use this**\n\nFor questions about whether the TeamConnect Bar is certified for Teams or Zoom, how it can be extended, how it is managed, and what security measures it has.\n\n**Not stated in this source**: which features differ between Bar S and Bar M beyond the single cable mode, room size limits, and prices.",
+  "basedOn": [
+    "b85a772adbb60ead3f4d5574e59446187f850caf",
+    "22501f57c0e6c36474184369dbce6ad99f69e2a2",
+    "dd290eff2034d259c16cfc5d6173af3351c55ea0",
+    "d96d17fc63efb7a1f45d6a230a6e83471c0f29c0"
+  ]
+}

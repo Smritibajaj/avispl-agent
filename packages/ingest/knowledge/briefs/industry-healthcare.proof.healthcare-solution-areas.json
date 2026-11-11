@@ -1,0 +1,10 @@
+{
+  "sourceId": "industry-healthcare",
+  "stage": "proof",
+  "slug": "healthcare-solution-areas",
+  "section": "AVI-SPL for healthcare: simulation training, telemedicine and hybrid collaboration spaces",
+  "body": "AVI-SPL's healthcare page names the solution areas it addresses for healthcare organizations. The content is brief and describes uses of technology, not completed projects.\n\n**What to know**\n\n- **Healthcare Simulation Training.** Simulation environments are presented as a way to increase patient safety. Experiential technology solutions help mimic stress, situations and patient responses.\n- **Telemedicine.** Telemedicine technology is presented as a way to widen access to healthcare and to provide services in a safe, secure remote environment.\n- **Hybrid collaboration spaces.** Modern training and meeting rooms are said to help attract and retain top medical talent and to improve patient outcomes.\n\n**When to use this**\n\nUse it when a healthcare customer asks whether AVI-SPL covers their sector and which kinds of spaces it addresses, including meeting and training rooms.\n\n**Not stated in this source:** named customers, deployments, results or figures, products, platforms and prices.",
+  "basedOn": [
+    "ed86f65809d85ceb959ceaf507bded371984af9f"
+  ]
+}

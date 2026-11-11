@@ -1,0 +1,10 @@
+{
+  "sourceId": "teams-rooms-faq",
+  "stage": "deploy",
+  "slug": "express-install-deployment-benefits",
+  "section": "Microsoft Teams Rooms Express Install: benefits of modern deployment models",
+  "body": "AVI-SPL's Microsoft Teams Rooms FAQ for IT leaders answers what a modern deployment model, such as Microsoft Teams Rooms Express Install, offers at the deployment stage.\n\n**What to know**\n- Such approaches can cut installation time and keep room downtime to a minimum.\n- They can lower the costs tied to upgrading rooms and deploying new ones.\n- Meeting room modernization programs can be scaled faster, with consistency kept across the environment.\n- Faster deployment can also bring time-to-value forward.\n- AVI-SPL sells Microsoft Teams Rooms Express Install bundles that are ready to buy, and also custom solutions.\n\n**When to use this**\nUse when a customer asks why to choose an Express Install style deployment over a traditional one, or whether AVI-SPL sells ready-made Teams Rooms bundles.\n\n**Not stated in this source**\nThe answer gives no installation times, prices or bundle contents.\n",
+  "basedOn": [
+    "019fef60b5acdd1d78aad4f7bc56f6ee818f6cb0"
+  ]
+}

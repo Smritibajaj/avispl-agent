@@ -115,7 +115,7 @@ export function toAppKnowledgeItem(
 }
 
 /** Parse + validate JSONL text. Returns valid records and per-line problems (never throws on bad lines). */
-export function parseRecordsJsonl(text: string): {
+export function parseRecordsJsonl(text: string, existingIds: ReadonlySet<string> = new Set()): {
   records: IngestRecord[];
   problems: RecordProblem[];
   /** Non-fatal: e.g. relationIds pointing outside the file (those ids are dropped at ingest). */
@@ -154,7 +154,7 @@ export function parseRecordsJsonl(text: string): {
   });
   // Relations must point at records in the same file (forceful-relation targets must exist).
   for (const r of records) {
-    const missing = r.relationIds.filter((x) => !seen.has(x));
+    const missing = r.relationIds.filter((x) => !seen.has(x) && !existingIds.has(x));
     if (missing.length) warnings.push({ id: r.id, problems: [`relationIds not in file (dropped): ${missing.join(", ")}`] });
     if (r.relationIds.includes(r.id)) warnings.push({ id: r.id, problems: ["relationIds contains its own id (dropped)"] });
   }

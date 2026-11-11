@@ -1,0 +1,12 @@
+{
+  "sourceId": "microsoft-teams-services",
+  "stage": "choose_platform",
+  "slug": "microsoft-partner-status-and-teams-services",
+  "section": "AVI-SPL Microsoft Teams services: Microsoft partner status, planning, deployment and operation of Teams and Teams Rooms",
+  "body": "This page states AVI-SPL's standing as a Microsoft partner and the scope of what it does for organisations choosing Microsoft Teams as their collaboration platform.\n\n**Partner status as stated**\n- AVI-SPL describes itself as a Microsoft Managed Partner and a Microsoft Modern Work Solutions Partner.\n\n**What AVI-SPL does**\n- Plans, deploys and operates the customer's Microsoft Teams environment, with the stated aim of taking the burden off the customer's IT support.\n- Designs interoperable solutions that support a team's preferred devices and control systems.\n- Provides solutions and support at local, regional and global level for Microsoft Teams, Teams Rooms and Surface devices.\n- Its certified specialists cover design, integration, multi-national implementations and 24/7 help desk support.\n\n**Approach to planning**\n- The page says that making Teams a reliable asset with a measurable, positive effect on operations takes planning well before deployment.\n- AVI-SPL's stated method is to understand the customer's processes and culture, evaluate their technology, and then determine the infrastructure needed to secure and support the experience the customer prefers.\n\n**The wider Microsoft toolset**\n- The page says that by integrating Teams Phone, Teams Rooms, Teams Premium, Places and Microsoft 365 Copilot, Microsoft gives organisations the tools to respond to recent workplace trends and create an intelligent, hybrid and secure workplace.\n- AVI-SPL offers to manage the customer's Microsoft ecosystem, and points to an interactive eBook for more detail.\n\n**When to use this**\nUse it when a customer asks whether AVI-SPL is a Microsoft partner, whether it can run a Teams and Teams Rooms rollout across several countries, or whether it supports Surface devices and round-the-clock help desk cover.\n\n**Not stated in this source**: licence requirements, prices, the names of the certifications held, or service levels beyond the 24/7 help desk mention.",
+  "basedOn": [
+    "521eb8146aa3d4bc11781d7a18e0efc23e5dd4c6",
+    "3dfde637039cad851c16903fe8d22d593f4b59ff",
+    "a840270fbd0bd4390be96486910ad9b4be017d29"
+  ]
+}

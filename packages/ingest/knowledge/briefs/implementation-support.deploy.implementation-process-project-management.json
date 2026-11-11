@@ -1,0 +1,12 @@
+{
+  "sourceId": "implementation-support",
+  "stage": "deploy",
+  "slug": "implementation-process-project-management",
+  "section": "AVI-SPL Implementation Support: deployment process, project management and technician credentials",
+  "body": "AVI-SPL's Implementation Support service covers AV integration and UC system installation, taking a collaboration technology design through to working rooms. This brief describes how the deployment is run and who does it.\n\n**What the service does**\n- AVI-SPL guides the customer through pre-implementation planning, addresses potential roadblocks and makes sure the new technology works as expected.\n- The stated aim is for system designs to deliver their full potential.\n\n**Project management areas**\n- **Planning**: goals are reviewed and difficult AV and UC technical requirements resolved.\n- **Cloud Migration**: infrastructure is optimized for deployment plans that are on-premise, cloud or hybrid.\n- **Interoperability**: the customer's chosen platforms and UC hardware are supported.\n- **Adoption**: train users to secure adoption and a positive user experience.\n\n**The implementation process**\nThe customer has a single point of contact throughout the deployment. The core process covers:\n- Review of functional requirements\n- Detailed project schedule\n- Hardware, software and UX management\n- Routine status reports\n- Quality assurance and control\n\n**Scale and credentials, as stated**\n- AVI-SPL states that over 86% of Fortune 500 companies rely on it for installing and deploying collaboration technology.\n- Its implementation teams count over 400 technicians, described as highly trained, who hold industry and manufacturer certifications; ITIL and AVIXA are named.\n\n**When to use this**\nUse when a customer asks how AVI-SPL manages an installation, who their contact will be during deployment, what reporting and quality checks to expect, whether user training is included, or what qualifications the installers hold.\n\n**Not stated in this source**\nNo deployment durations, pricing, service levels or region-by-region coverage are given.\n",
+  "basedOn": [
+    "a61d87a04c66faee103bb8a9489c81f46dace101",
+    "97ff5cdcbfa29066d322b8843ed937f151207e42",
+    "a93b874203c2aeae51d91e36b7755f57242c276d"
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "sourceId": "express-lane-webcast",
+  "stage": "deploy",
+  "slug": "express-install-deployment-approach",
+  "section": "Webcast: how Microsoft Teams Rooms Express Install expands rooms without a traditional room build",
+  "body": "This webcast introduces Microsoft Teams Rooms Express Install from a deployment angle. The page gives a short description only.\n\n**What to know**\n\n- Express Install is a way to extend the Microsoft Teams experience to more meeting spaces while avoiding what a traditional room build requires.\n- It relies on a standardized deployment approach, so room technology can be expanded without major infrastructure changes.\n- Sarika Kesavan draws on Microsoft's own deployment experience and explains how Microsoft approaches room technology around the world.\n- The session covers how Microsoft equips more spaces with collaboration technology while reusing the same deployment process, not reinventing it each time.\n\n**When to use this**: a customer asking how to roll Teams Rooms out to many spaces quickly, or wanting to hear how Microsoft itself deploys rooms.\n\n**Not stated in this source**: deployment steps, timings, hardware, prices and licence requirements.",
+  "basedOn": [
+    "eac2d42d7f0f221e5d9c1b355a9dd9bd8e609d19"
+  ]
+}

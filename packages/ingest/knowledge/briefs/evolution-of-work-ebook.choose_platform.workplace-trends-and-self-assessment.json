@@ -1,0 +1,18 @@
+{
+  "sourceId": "evolution-of-work-ebook",
+  "stage": "choose_platform",
+  "slug": "workplace-trends-and-self-assessment",
+  "section": "Evolution of work ebook: flexibility, AI, hybrid work, return to office and endpoint security pressures",
+  "body": "This interactive ebook, \"Create your future-ready workplace\", sets out the workplace pressures that sit behind a platform decision. It gives context and discovery questions, not product detail. It says the workplace is being reshaped by two forces: the demand for more flexibility and the rise of AI, which together change where and how work is done.\n\n**What to know**\n\n- **People cannot keep up.** The volume of work is growing faster than employees' ability to keep pace. Email overload continues and after-hours meetings have not declined. Microsoft is cited for the finding that emails, chats and meetings take up 60% of users' time, so the workday still leans toward communication. Leaders also say the move to hybrid work has made it hard to feel confident that employees are productive.\n- **Hybrid is mainstream.** Employers and employees both want a mix of in-person and remote work. Over 70 percent of workers want flexible remote options to continue, while over 65 percent want more in-person time with their teams. The ebook says the question has moved on to how to get the most value from hybrid work.\n- **Return to the office is a struggle.** People now expect flexibility and autonomy over how, when and where they work, and policy alone cannot reverse that. Research cited says people come in more for social connection: company expectations alone are not enough of a reason to go in for 78% of business decision makers and 73% employees. Rebuilding social connection is presented as a lever for bringing people back.\n- **Security is more complex.** As ways of working have changed, 68% of organizations have experienced one or more endpoint attacks. In multiple cases a single unmanaged device has put a whole organization at risk, and with unmanaged endpoints growing in number, almost 70% said that managing hybrid work left them feeling overwhelmed. The ebook points to The State of Cybersecurity: 2025 Trends Report here.\n\n**Self-assessment questions the ebook asks**\n\n- Whether people in the organization are experiencing burnout (rising job dissatisfaction, anxiety and depression, or motivated employees with a healthy work-life balance).\n- Which hybrid arrangement applies: a 5-day work from office policy, a fully remote and distributed workforce, or some compulsory office days each week.\n- Whether people feel less socially connected and focused only on getting the job done, or there is a strong bond among people and with leadership.\n- How secure the current foundation is: very secure by default, somewhat secure but unsure about human error and the extra requirements of AI tools, or not secure and needing better systems and employee readiness.\n\n**When to use this**: early conversations about why a customer is revisiting its collaboration platform, or when a consultant needs discovery questions on hybrid policy, connection and security.\n\n**Not stated in this source**: these sections name no products, devices or AVI-SPL services, and most statistics are given without a named source.",
+  "basedOn": [
+    "f9259c8d4f6ef79182f54b2c62d603c71da32713",
+    "514e18848fdfce04ad12d16d1079074c7db51824",
+    "36c55a092c8937577b7e62353418358173811750",
+    "35518a8619e0b202e3b815038963d376252a0fb8",
+    "dc1dd58322fc2d5ee634a6f20d31d57e945ddb14",
+    "bfe1a66aab88c1ab9890531cef9401bb2c93f6c8",
+    "f6ae322fb7e36132a23451ec4db42d65b6623cd4",
+    "a472136dd8ccc814a251659d60930f63ad06b443",
+    "bfaa1af7abbf854f68cbdd5bb44e35e0f7667d67"
+  ]
+}

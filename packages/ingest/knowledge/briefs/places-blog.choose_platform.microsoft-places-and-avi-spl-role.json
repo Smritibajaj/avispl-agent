@@ -1,0 +1,11 @@
+{
+  "sourceId": "places-blog",
+  "stage": "choose_platform",
+  "slug": "microsoft-places-and-avi-spl-role",
+  "section": "Microsoft Places for return-to-office and space planning: AVI-SPL's role in the Places partner ecosystem",
+  "body": "This AVI-SPL blog post by Mathew DeFreitas, dated December 2024, introduces Microsoft Places as a workplace management tool and states AVI-SPL's involvement with it. The detail sits in a podcast episode that the post points to, so the written content is a summary of topics.\n\n**The problem Places addresses, per the post**\n- Employees returning to the office may hesitate: some recall long commutes, others worry about not finding a workstation or meeting space that meets their needs.\n- IT has to make sure there is space for varying schedules and shifts in office attendance.\n- The post says tools like Microsoft Places can help with these goals.\n\n**AVI-SPL's role**\n- AVI-SPL says it is ready to help customers onboard Places.\n- It describes itself as a global AV/UC integrator in the Microsoft Places partner ecosystem, involved since before Places launched into Public Preview.\n\n**Podcast topics**\nIn an episode of The Collaboration Space podcast, Ron Wolfe, Vice President, Global Microsoft Practice at AVI-SPL, discusses the employee and workplace benefits of Microsoft Places. He covers:\n- mandates to return to work\n- the way Microsoft Places supports flexible work and modernizes offices with intuitive tech\n- how AVI-SPL aligned itself with the Microsoft Places launch\n- the way Places can help an organisation understand employees' in-office experiences and compare planned versus actual use of meetings or workstations\n- top customer benefits, including workplace optimization, available analytics and Microsoft standardization\n\n**When to use this**\nUse it when a customer asks what Microsoft Places is for, whether AVI-SPL works with Places, or how to compare planned and actual office use.\n\n**Not stated in this source**: licence requirements for Places, prices, feature detail, or any customer deployment.",
+  "basedOn": [
+    "a766459c67877df069f447948d69931bc341cc37",
+    "c035be617fa41718b59ee31711fcc196d6f4d3a7"
+  ]
+}

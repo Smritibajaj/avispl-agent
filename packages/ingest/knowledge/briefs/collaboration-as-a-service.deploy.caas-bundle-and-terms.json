@@ -1,0 +1,12 @@
+{
+  "sourceId": "collaboration-as-a-service",
+  "stage": "deploy",
+  "slug": "caas-bundle-and-terms",
+  "section": "Collaboration as a Service (CaaS): what AVI-SPL bundles and the subscription and payment terms",
+  "body": "Collaboration as a Service (CaaS) is AVI-SPL's program for bundling UC applications, AV devices and IT services, so that hardware, software, training, maintenance and collaboration technology support are procured and managed together. It matters at the deploy stage when a customer wants to fund and run a rollout as a subscription.\n\n**What a CaaS program may include**\nThe content is based on the customer's AV and UC technology roadmap and end-user needs, and may include any or all of:\n- Hardware, such as video conferencing endpoints and devices, displays, audio systems, microphones, content distribution and control interfaces.\n- Software licensing fees, such as Cisco Webex, Microsoft Teams or Zoom, and AVI-SPL Symphony.\n- Deployment, managed services, and maintenance and support.\n\n**Benefits as described**\n- The program is said to deliver reliability, ease of use, security and a consistent user experience.\n- It is positioned for any organization that wants to accelerate growth and manage IT resources more efficiently.\n\n**Lifecycle management**\n- Customers can outsource UC and room technology configuration, interoperability, refresh cycles and management.\n- License renewals and refreshes can be consolidated to ease lifecycle management and platform migrations.\n\n**Flexibility of terms**\n- Subscription terms are flexible, from one to five years.\n- Payments can be monthly, quarterly or annual.\n- Interest-free options may be available. The page says \"may\", so this is not guaranteed.\n\n**Lower cost leasing**\n- The model conserves capital for strategic business investments.\n- It aligns with how organizations consume other technology, like laptops and mobile phones.\n\n**When to use this**\nFor customers asking whether room hardware, platform licenses and support can be paid for as one subscription, what term lengths and payment schedules exist, or how to handle refresh cycles and platform migrations without a large up-front purchase.\n\n**Not stated in this source**\nNo prices, rates, minimum commitments, eligibility conditions or end-of-term arrangements are given.",
+  "basedOn": [
+    "7623959f11a844dfd5fb5e421499f3e939c719df",
+    "f64e652e6a6f1e0b6ce102c8aaa74e9d431bef35",
+    "4f27e7aa90236de081f36e1dc92bdac96952fe25"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "sourceId": "standardization-ebook-landing",
+  "stage": "plan_design",
+  "slug": "standardization-ebook-topics",
+  "section": "Scalable Models for Meeting Room Standardization eBook: what it covers and why standardization matters",
+  "body": "AVI-SPL offers an eBook, Scalable Models for Meeting Room Standardization, that sets out a practical framework for standardizing meeting rooms. This brief describes the landing page for that eBook, not the eBook's contents in detail; it is useful at the plan-and-design stage to explain why standards matter and to point a customer to the resource.\n\n**The problem described**\n- As meeting environments grow across rooms and locations, keeping the experience consistent gets harder.\n- Differences in technology, workflows and room setup create friction for users and raise support demands on IT teams.\n\n**What the eBook aims to do**\nIt outlines a framework meant to make collaboration experiences more consistent and simpler to support, manage and scale as time goes on.\n\n**Topics the page lists**\n- A scalable framework for standardizing meeting rooms, and how to build it.\n- Cutting operational complexity across rooms and locations.\n- Giving users more consistent collaboration experiences.\n- Better workflows for room support, management and governance.\n- Bringing meeting room design into line with accessibility and sustainability goals.\n- Operational visibility and data as support for long-term performance.\n\n**AVI-SPL's position**\n- Doing this at scale calls for consistent design, operational planning, governance and strategies for long-term support.\n- The page says that working with these standards in mind improves the experience for both users and IT teams.\n- The eBook features solutions from providers including Neat, Q-SYS and Shure.\n\n**How to get it**\nThe page asks the reader to fill out a short form, after which AVI-SPL emails a link to the eBook.\n\n**When to use this**\nFor customers asking why they should standardize meeting rooms, what a standardization framework should address, or whether AVI-SPL has guidance material on the subject.\n\n**Not stated in this source**\nThe landing page gives no room standards, room types, product models or steps from the framework itself.",
+  "basedOn": [
+    "4e535e6bb35723affc896680efd8578bc71d09e6",
+    "098122454c197ba21daca27270ce91dc6e623ce5",
+    "34f2529c4ad8fd9e8b5a5812d17b926e5c18299d"
+  ]
+}

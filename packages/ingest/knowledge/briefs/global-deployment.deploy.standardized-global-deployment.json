@@ -1,0 +1,11 @@
+{
+  "sourceId": "global-deployment",
+  "stage": "deploy",
+  "slug": "standardized-global-deployment",
+  "section": "AVI-SPL Global Deployment: standardized AV and UC rollouts with a single point of contact and in-country teams",
+  "body": "AVI-SPL's Global Deployment service rolls out a customer's standardized AV and unified communications solutions around the world, with the aim of a consistent user experience in every location. The page frames it as standardized deployment and support.\n\n**What to know**\n\n- **Delivery model**: AVI-SPL's global teams support centralized business decisions. The customer has a single point of contact at AVI-SPL, while in-country support teams deliver localized service.\n- **Global management with 24/7 local support**: AVI-SPL teams work with the customer across borders and time zones. The project manager keeps communication clear with the customer's global and local personnel throughout the deployment process and the ongoing 24/7 support.\n- **Global RFP expertise**: AVI-SPL teams make sure global RFP responses contain accurate project details based on local and regional requirements. They take into account local laws and tax codes, power and measurement systems, and cultural and language considerations.\n- **Unified Communications**: AVI-SPL presents itself as a global provider for enabling teams on Cisco Webex, Google Workspace, Microsoft Teams, Zoom or another platform. It develops UC technology standards to ensure a consistent user experience.\n\n**When to use this**\n\nFor customers with offices in several countries who ask how a standard room design is deployed and supported globally, who their contact would be, or how AVI-SPL handles a global RFP.\n\n**Not stated in this source**: countries covered, timelines, response times and prices.",
+  "basedOn": [
+    "67b40b178d94f02305c5ac1363e41ed995d58160",
+    "6fc1842f6f093b1e1ad3bbf8e30d7cb00f5bfe50"
+  ]
+}

@@ -18,6 +18,8 @@ export interface IngestOptions {
   log?: (line: string) => void;
   /** Skip phase 2 (relations). */
   skipRelations?: boolean;
+  /** Ids already in the database that relations may point to (not sent again). */
+  existingIds?: ReadonlySet<string>;
 }
 
 export interface IdFailure {
@@ -68,8 +70,13 @@ export function batchItems(items: AppKnowledgeItem[], batchSize: number, maxByte
 }
 
 /** Build phase-1 and phase-2 items and run the local pre-checks (no network). */
-export function planIngest(records: IngestRecord[], target: { database: string; collection: string }) {
-  const knownIds = new Set(records.map((r) => r.id));
+export function planIngest(
+  records: IngestRecord[],
+  target: { database: string; collection: string },
+  /** Ids already in the database that a relation may point to, although they are not in `records`. */
+  existingIds: ReadonlySet<string> = new Set(),
+) {
+  const knownIds = new Set([...records.map((r) => r.id), ...existingIds]);
   const precheckFailures: IdFailure[] = [];
   const phase1: AppKnowledgeItem[] = [];
   const phase2: AppKnowledgeItem[] = [];
@@ -86,14 +93,14 @@ export function planIngest(records: IngestRecord[], target: { database: string; 
   }
   // Phase-2 targets must have passed the pre-check too.
   const ok = new Set(phase1.map((i) => i.id));
-  for (const it of phase2) if (it.relations) it.relations.ids = it.relations.ids.filter((x) => ok.has(x));
+  for (const it of phase2) if (it.relations) it.relations.ids = it.relations.ids.filter((x) => ok.has(x) || existingIds.has(x));
   return { precheckFailures, phase1, phase2: phase2.filter((i) => i.relations && i.relations.ids.length > 0) };
 }
 
 async function sendAndWait(
   api: HydraApi,
   items: AppKnowledgeItem[],
-  opts: Required<Omit<IngestOptions, "log" | "skipRelations">> & { log: (l: string) => void; upsert?: boolean; stage: "ingest" | "relations" },
+  opts: Required<Omit<IngestOptions, "log" | "skipRelations" | "existingIds">> & { log: (l: string) => void; upsert?: boolean; stage: "ingest" | "relations" },
 ): Promise<PhaseReport> {
   const t0 = Date.now();
   const errored: IdFailure[] = [];
@@ -172,7 +179,8 @@ export async function runIngest(api: HydraApi, records: IngestRecord[], options:
     statusBatch: options.statusBatch ?? 50,
     log: options.log ?? (() => {}),
   };
-  const plan = planIngest(records, { database: api.config.database, collection: api.config.collection });
+  const existing = options.existingIds ?? new Set<string>();
+  const plan = planIngest(records, { database: api.config.database, collection: api.config.collection }, existing);
   for (const f of plan.precheckFailures) opts.log(`  precheck FAIL ${f.id}: ${f.message}`);
 
   opts.log(`phase 1: ${plan.phase1.length} items without relations`);
@@ -184,7 +192,7 @@ export async function runIngest(api: HydraApi, records: IngestRecord[], options:
   const done = new Set(phase1.completed);
   const p2 = plan.phase2
     .filter((it) => done.has(it.id))
-    .map((it) => ({ ...it, relations: { ids: it.relations!.ids.filter((x) => done.has(x)) } }))
+    .map((it) => ({ ...it, relations: { ids: it.relations!.ids.filter((x) => done.has(x) || existing.has(x)) } }))
     .filter((it) => it.relations.ids.length > 0);
   opts.log(`phase 2: ${p2.length} items re-ingested (upsert) with relations.ids`);
   const phase2 = await sendAndWait(api, p2, { ...opts, upsert: true, stage: "relations" });

@@ -1,0 +1,11 @@
+{
+  "sourceId": "real-time-design",
+  "stage": "plan_design",
+  "slug": "visualize-rooms-before-build",
+  "section": "AVI-SPL Real-Time Design: 3D virtual room designs to test spaces and technology before building",
+  "body": "Real-Time Design is AVI-SPL's approach to visualizing spaces and their technology before anything is built, so that room designs can be tested before the customer invests.\n\n**What to know**\n\n- Purpose as stated: speed up planning and build buy-in.\n- The visualization process involves multiple stakeholders in human-centric design thinking, with a focus on the end user, who the page says is often overlooked.\n- AVI-SPL uses 3D virtual designs to visualize and refine the digital workplace experience, and invites customers to get in touch about supporting their design choices.\n\n**Example virtual spaces shown on the page**\n\n- **Native conference rooms**: Microsoft Teams Rooms, Cisco Workspaces, Zoom room\n- **Team collaborating and training**: Divisible multipurpose room, Multipurpose Room, Large Conference Room\n- **Small spaces**: Huddle room, Small hybrid conference room\n- **Work spaces**: Control rooms, Medical Simulation, XR Studio\n- **Specialty Spaces**: Lobby, Immersive Exhibits\n- **Extra Large Environments**: Executive Boardroom, Intelligent Camera Systems\n\n**When to use this**\n\nFor customers who want to see a room design before committing budget, who need to get several stakeholders to agree on a design, or who ask what kinds of spaces AVI-SPL can show as virtual examples.\n\n**Not stated in this source**: what equipment each virtual room contains, how long a design session takes, what the customer needs in order to view a design, and prices.",
+  "basedOn": [
+    "82b24dec732f1a458be0c22caa0fcada2fb27282",
+    "9b12270b97a10554cf32f2433f323a2a16a1ff09"
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "sourceId": "industry-legal",
+  "stage": "proof",
+  "slug": "law-firm-av-and-uc-services",
+  "section": "AVI-SPL for law firms: planning, deploying and operating secure AV and UC technology",
+  "body": "AVI-SPL's Legal industry page describes how it works with law firms and other legal services. It says AVI-SPL helps them overcome common technology challenges, modernize communication systems and implement best practices, and that it plans, deploys and operates AV and UC solutions supporting compliance, privacy, confidentiality and user experience.\n\n**What to know**\n\nThe offering for law firms is described in stages:\n- **Planning**: AVI-SPL teams meet the firm to understand its operations, clients and culture. AVI-SPL experts then recommend tools to support the firm's teams and give a good user experience.\n- **Deployment**: the team installs and configures solutions in the firm's collaboration spaces, making sure client confidentiality is protected and that the tools work with secure cloud-based conferencing platforms.\n- **Operate**: AVI-SPL services help prevent technology failures and inefficiencies that could harm client relationships and the firm's reputation.\n\nReasons the page lists for a law firm to refresh its AV and UC technology:\n- better reliability and user experience;\n- meeting client needs;\n- use of AI-enabled meeting tools;\n- a stronger reputation for the firm;\n- attracting and retaining top legal talent;\n- regulatory compliance and security;\n- interoperability;\n- growth and ease of use;\n- augmenting the skill sets of the IT teams.\n\n**When to use this**: a law firm or legal services customer asking whether AVI-SPL works in the legal sector and how it handles confidentiality and compliance concerns.\n\n**Not stated in this source**: no named law firm customers, deployments, results, specific products, platforms or compliance standards. This is a description of the offering, not a case study.",
+  "basedOn": [
+    "605932edc5d71ecf1b1c727bf6a1dffbd6e0a469",
+    "0d5de50dd4bcdf1fb74aa5fc81dfa0b81ad9870f",
+    "5d0dfd016a6dc814aab01b8928402a62f155ae57"
+  ]
+}

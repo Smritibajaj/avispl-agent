@@ -1,0 +1,14 @@
+{
+  "sourceId": "neat",
+  "stage": "choose_platform",
+  "slug": "neat-devices-through-avi-spl",
+  "section": "Neat video devices available from AVI-SPL: device range, room fit, certifications and Neat Pulse management",
+  "body": "Neat designs simple video devices for Microsoft Teams, Zoom and BYOD, available from AVI-SPL. The page describes the device range, which spaces each device suits and how the devices are set up and managed, which helps when matching a device to a room.\n\n**What to know**\n\n- **Platforms and certification**: Neat devices are purpose-built for Microsoft Teams, Zoom and BYOD. They are certified for Microsoft Teams, Zoom and BYOD, with Google Meet described as coming soon.\n- **Spaces covered**: open plan areas, meeting rooms of all sizes, privacy booths, social zones, home offices and more.\n- **Setup**: everything needed to get a device running is in the box, including all mounts and cables. Devices are described as easy to install, set up and use.\n- **Remote administration**: Neat Pulse gives a remote view of all Neat devices. It shows current status, scheduled updates, room occupancy, air quality and more.\n- **Apps**: Neat App Hub brings business applications used in daily workflows onto the devices.\n- **Real-Time Design with Neat**: customers can validate Neat room designs before building them, with no headset or specialty hardware needed.\n\n**Devices**\n\n- **Neat Bar Gen 2**: for meeting spaces of up to 10 people.\n- **Neat Bar Pro**: for larger rooms of up to 30 people; it can drive up to three screens.\n- **Neat Board Pro and Neat Board 50**: all-in-one touchscreen displays. They can be mounted on a wall, or made mobile with Neat's adaptive stand.\n- **Neat Center**: a companion device that extends audio and video coverage around the room.\n\n**Named features**\n\n- **Neat Symmetry**: shows each person in the room up close and equally, whether they sit, stand or move about.\n- **Neat Boundary**: removes the worry of distraction from other activity happening nearby.\n- **Neat AI**: the page says it turns meetings into cinematic productions, encouraging freedom of movement and natural conversation in hybrid collaboration.\n\nThe page also claims that this more human digital experience has a positive effect on people's well-being, motivation and productivity; no evidence is given for that.\n\n**When to use this**: a customer asking which Neat device fits a room size, whether Neat works with Teams or Zoom, or how Neat devices are managed remotely.\n\n**Not stated in this source**: prices, what AVI-SPL's partner status with Neat is, and capacity figures for the Neat Board models and Neat Center.",
+  "basedOn": [
+    "6312ffe45e21ec701ba80048e5b9f078abcfcffd",
+    "b52afb302cd65b8fdd9869614071495439dc1fb6",
+    "d5cfcfcfd0276e957ef6a67e7b3c790f0803eebc",
+    "7d2537981945eac9a897881ec12437f6ce751200",
+    "bbd305a973911b7f37ead0325c10130b3e5dd606"
+  ]
+}

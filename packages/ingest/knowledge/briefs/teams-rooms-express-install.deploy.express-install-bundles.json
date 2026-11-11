@@ -1,0 +1,15 @@
+{
+  "sourceId": "teams-rooms-express-install",
+  "stage": "deploy",
+  "slug": "express-install-bundles",
+  "section": "Microsoft Teams Rooms Express Install bundles from AVI-SPL: what they are, hardware, options and use cases",
+  "body": "Microsoft Teams Rooms Express Install is AVI-SPL's ready-to-deploy bundle approach for turning small spaces into Microsoft Teams Rooms. It targets the case where teams want more collaboration spaces quickly while IT needs to keep standards and control. The page positions it as a way to avoid complex design and shorten deployment and time-to-value.\n\n**What to know**\n\n- **What it delivers**: the native Teams Room experience in any space, using secure Microsoft Teams Rooms bundles.\n- **BYOD migration**: Express Install also converts unmanaged Bring Your Own Device spaces into Teams Rooms, which enables \"one-touch join\" and centralized management.\n- **Ready-made bundles**: curated hardware available to purchase now, featuring LG displays, Jabra video bars and Salamander stands.\n- **Custom packages**: AVI-SPL will build a bundle to fit needs and budget. Different hardware, or a mobile cart in place of a stand, can be requested.\n- **Mobility**: devices do not have to be fixed to a wall; bundles can be mounted on stands or mobile carts so teams choose where to meet.\n- **Sustainability**: AVI-SPL can help choose hardware that meets the customer's sustainability standards. Among the options are devices made with recycled components and packaging that is streamlined and recyclable.\n\n**Reasons the page gives for Microsoft Teams in every room**\n\n- Control: room meeting analytics can be tracked, and the Facilitator and Interpreter Microsoft 365 Copilot agents can be accessed to streamline meetings.\n- A consistent user experience in every space.\n- Blocking BYOD hazards: removing unsecured personal devices to keep data safe and stop malware from compromising the network.\n\n**Use cases named**\n\n- Franchises: a consistent experience across large, dispersed groups such as car dealerships.\n- Government agencies: secure spaces for meetings between departments and communications with constituents.\n- Municipal Courts: secure, reliable communication between court personnel and participants.\n\n**Why AVI-SPL, as stated**\n\n- Years of experience designing and implementing Microsoft Teams Rooms.\n- Express Install components can be tailored.\n- Preferred partners include LG, Jabra, Salamander and more.\n- AVI-SPL provides ongoing support and maintenance.\n\n**When to use this**: a customer who wants to add Teams Rooms to small or BYOD spaces fast, asks what is in the bundles, or needs a mobile option.\n\n**Not stated in this source**: prices, installation times, model numbers, and any licence requirements for Teams Rooms or the Copilot agents.",
+  "basedOn": [
+    "599510a3a13f9dc6a43adbfaab50f85a3d7a0a0d",
+    "a3f778625f28a9cc841f3aa85ffcb77ecd1f3aa3",
+    "82dfdc652ca2f85cc6eb360f238f9acddc4ac205",
+    "c8f5cae78cf022a7c8017aad68e072e3939f97ec",
+    "d0fca1b9b9fa4d2c6781708cdc56cf831dea1f98",
+    "a42ee36db037f4f63d4c281491685c75cf62d4aa"
+  ]
+}

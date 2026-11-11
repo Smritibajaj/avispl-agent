@@ -1,0 +1,11 @@
+{
+  "sourceId": "concept-catalog-2024-25",
+  "stage": "run_support",
+  "slug": "enterprise-managed-services",
+  "section": "AVI-SPL Enterprise Managed Services: what the program includes, pricing model and add-ons",
+  "body": "The Concept Catalog presents AVI-SPL Enterprise Managed Services as a program the AVI-SPL services team developed to meet its own list of considerations for choosing a managed services provider. It is described as an end-to-end solution that provides expert care for an organization's visual communication environment, focusing on key areas throughout the solution's lifecycle.\n\n**What to know**\n\n- **Live support**: customers can speak directly to a support team member 24/7, not to an answering service.\n- **Pricing model**: simple per-room or per-digital signage pricing.\n- **Growth**: rooms and devices can be added as needed, and doing so does not require starting a new contract.\n- **How the service is run**: the team applies ITIL management best practices, certified technicians and industry applications to monitor, manage and analyze performance.\n- **Services included**:\n  - Asset Inventory Service\n  - Device Monitoring\n  - Configuration Management\n  - Incident Management\n  - Problem Management\n  - Preventive Maintenance\n  - Service Reporting\n  - Service Management\n- **Optional add-ons**: additional services and integrations, including Office 365, ServiceNow and Crestron XiO Cloud.\n- **Stated goal**: helping customers turn their environments into simple, scalable, supportable and secure business communication solutions.\n\n**When to use this**: questions about what Enterprise Managed Services covers, how it is priced, whether rooms can be added mid-contract, and which integrations can be added.\n\n**Not stated in this source**: price figures, service level targets and response times. The included services are listed by name only, without descriptions.",
+  "basedOn": [
+    "f3cd4906f98bf33ab872a9a658b84919f94da9d8",
+    "1826f87321017c9e72f3337c71846e6ffb4efc41"
+  ]
+}

@@ -3,7 +3,9 @@
  *   phase 1: all records WITHOUT relations, poll /context/status until terminal
  *   phase 2: upsert records that have relationIds, WITH relations.ids
  * Usage: pnpm hydra ingest [--file <path>] [--dry-run] [--batch-size N] [--skip-relations]
- *                          [--database <name>] [--allow-non-dev] [--confirm-bulk]
+ *                          [--database <name>] [--allow-non-dev] [--confirm-bulk] [--relations-to=<path>]
+ * --relations-to=<records.jsonl>: records ALREADY in the database that relationIds may point to (they are not
+ * sent again). Used for expert briefs, which link to the section records they restate.
  * More than 20 records against a real (non-mock) database needs --confirm-bulk (DECISIONS.md rule 6).
  */
 import { mkdir, readFile, writeFile } from "node:fs/promises";
@@ -27,13 +29,20 @@ run(async () => {
   } catch {
     throw new HydraError("config", `cannot read ${file} (has packages/ingest produced records.jsonl yet?)`);
   }
-  const { records, problems, warnings } = parseRecordsJsonl(text);
+  const relationsTo = args.values.get("relations-to");
+  const existingIds = new Set<string>();
+  if (relationsTo) {
+    const existing = parseRecordsJsonl(await readFile(relationsTo, "utf8"));
+    for (const r of existing.records) existingIds.add(r.id);
+    console.log(`[hydra] relations may point to ${existingIds.size} records already ingested (${relationsTo})`);
+  }
+  const { records, problems, warnings } = parseRecordsJsonl(text, existingIds);
   for (const p of problems) console.error(`INVALID line ${p.line ?? "?"} id=${p.id ?? "?"}: ${p.problems.join("; ")}`);
   for (const w of warnings) console.error(`warning id=${w.id}: ${w.problems.join("; ")}`);
   if (problems.length) throw new HydraValidationError(`${problems.length} invalid record(s) in ${file}; nothing sent`);
   if (!records.length) throw new HydraValidationError(`${file} contains no records; nothing to ingest`);
 
-  const plan = planIngest(records, cfg);
+  const plan = planIngest(records, cfg, existingIds);
   for (const f of plan.precheckFailures) console.error(`PRECHECK FAIL ${f.id}: ${f.message}`);
   const batchSize = Number(args.values.get("batch-size") ?? 20);
   const v1 = plan.phase1.length ? AppKnowledgeBatchSchema.safeParse(plan.phase1) : { success: true as const };
@@ -58,7 +67,7 @@ run(async () => {
   }
 
   const api = new HydraApi(cfg);
-  const report = await runIngest(api, records, { batchSize, skipRelations: args.flags.has("skip-relations"), log: (l) => console.log(l) });
+  const report = await runIngest(api, records, { batchSize, skipRelations: args.flags.has("skip-relations"), existingIds, log: (l) => console.log(l) });
   const errored = [...report.precheckFailures, ...report.phase1.errored, ...(report.phase2?.errored ?? []), ...(report.phase2?.relationsErrors ?? [])];
   console.log(`[hydra] phase1: completed ${report.phase1.completed.length}/${report.phase1.sent}, errored ${report.phase1.errored.length}, pending ${report.phase1.pending.length}, ${Math.round(report.phase1.durationMs / 1000)}s`);
   if (report.phase2)

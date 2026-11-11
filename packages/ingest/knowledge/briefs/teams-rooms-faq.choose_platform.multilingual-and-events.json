@@ -1,0 +1,11 @@
+{
+  "sourceId": "teams-rooms-faq",
+  "stage": "choose_platform",
+  "slug": "multilingual-and-events",
+  "section": "Microsoft Teams Rooms FAQ: multilingual meeting capabilities and the Microsoft Teams Events app",
+  "body": "Two answers in AVI-SPL's Microsoft Teams Rooms FAQ for IT leaders deal with meetings that cross languages and with larger, moderated events. They are relevant for global organizations and for teams that run town halls or webinars on Teams.\n\n**What to know**\n\n**Multilingual meetings**\n\n- Language support in real time may help break down communication barriers between regions, countries, and business units.\n- The FAQ presents the benefit as more than convenience: teams may improve participation, reach decisions faster, reduce misunderstandings, and open meetings up to diverse audiences. It ties this to supporting international growth initiatives.\n- Capabilities that may be included:\n  - Interpreter Agent\n  - Multilingual speech recognition\n  - Live translated captions\n  - Translated recap after multilingual meetings\n- Availability as stated: which features are available may depend on Teams Premium and Copilot licenses, the type of meeting, how the tenant is configured, the languages supported, rollout status, and region.\n\n**Microsoft Teams Events app**\n\n- The app is described as a unified hub that simplifies creating events and keeps the experience consistent across all of an organization's events at scale.\n- The FAQ names these uses: executive communications, webinars, town halls, employee engagement events and training sessions, as well as customer-facing presentations and live events where a moderated Q&A option and limited attendee interaction are needed.\n\n**When to use this**\n\nUse it when a customer asks how Teams supports meetings held in more than one language, what licenses the translation features may depend on, or which tool to use for town halls, webinars and other moderated events.\n\n**Not stated in this source:** which languages are supported, event size limits, and prices.",
+  "basedOn": [
+    "9dfb9e70c0d8fb2510a568fc4cd5372247ca3e0f",
+    "4eaa97cd267343f6043b0c0748aa4fc8a4d241d2"
+  ]
+}

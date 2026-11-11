@@ -1,0 +1,13 @@
+{
+  "sourceId": "express-lane-webcast",
+  "stage": "choose_platform",
+  "slug": "webcast-topics-and-speakers",
+  "section": "Webcast: Scaling Microsoft Teams Rooms with Express Install, topics covered and speakers",
+  "body": "\"Scaling Microsoft Teams Rooms with Express Install\" is an AVI-SPL webcast for organizations expanding Microsoft Teams Rooms. The page lists the topics and speakers; it does not give the detail of what is said.\n\n**What to know**\n\n- Topics covered:\n  - reducing deployment complexity when expanding Microsoft Teams Rooms;\n  - how standardized designs help create a more consistent user experience;\n  - how meeting spaces can benefit from built-in AI capabilities;\n  - how analytics give more visibility into room performance and usage;\n  - ways to make better use of existing technology investments.\n- Host: Nancy Lussier, Marketing Director, AVI-SPL.\n- Guest: Sarika Kesavan, Devices Partner Engineering, Microsoft Teams.\n- AVI-SPL's role: deploying and supporting Microsoft Teams environments for organizations, in meeting spaces of every size, both for refreshes of existing rooms and for planned additional deployments.\n- Related channels: AVI-SPL is on YouTube, publishes new episodes of The Collaboration Space, and offers the Connect newsletter with content, news and events.\n\n**When to use this**: a customer who wants to hear Microsoft's view on scaling Teams Rooms, or asks for further viewing on Express Install.\n\n**Not stated in this source**: the webcast date and length, which AI capabilities or analytics tools are discussed, and any licence requirements.",
+  "basedOn": [
+    "af971602222fb68a32ec34f56e6a2f335309383b",
+    "da0c5b27aba21f479c93fc4ec52bbd4c2714c775",
+    "da852103b66ab2ee4b5d9077c13cb8fccab7c4a2",
+    "5e6c8e74e15bfff2194ad6260ed2f344ed72a957"
+  ]
+}
