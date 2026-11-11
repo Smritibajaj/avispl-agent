@@ -1,4 +1,5 @@
 import { createChatResponse } from "../../../lib/agent";
+import { findContactRequest } from "../../../lib/contact-request";
 import { maxOutputTokens, MISSING_KEY_MESSAGE, resolveModelMode } from "../../../lib/env";
 import { getStore } from "../../../lib/knowledge";
 import { buildModel } from "../../../lib/model";
@@ -6,7 +7,7 @@ import { chatRateLimiter, clientIp } from "../../../lib/rate-limit";
 import type { ChatMessage } from "../../../lib/tools";
 
 export const runtime = "nodejs";
-export const maxDuration = 60; // seconds; the agent itself stops at 45 s
+export const maxDuration = 75; // seconds; the agent itself stops at 60 s
 
 const jsonError = (status: number, code: string, error: string, headers?: Record<string, string>) =>
   Response.json({ code, error }, { status, headers });
@@ -39,6 +40,10 @@ export async function POST(req: Request): Promise<Response> {
         "retry-after": String(rl.retryAfterSec),
       });
   }
+
+  // The customer left an email after the "our team will reach out" fallback: the server log is where the team finds it.
+  const contact = findContactRequest(messages);
+  if (contact) console.warn(`[contact-request] email=${contact.email} question=${JSON.stringify(contact.question)}`);
 
   let store;
   try {

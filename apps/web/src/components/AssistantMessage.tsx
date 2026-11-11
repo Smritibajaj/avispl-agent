@@ -3,6 +3,7 @@
 import { PENDING_SENTENCE } from "../lib/licensing-guard";
 import type { MessageEvidence } from "../lib/message-evidence";
 import { RichText } from "./RichText";
+import { Working } from "./Working";
 
 interface Props {
   ev: MessageEvidence;
@@ -18,24 +19,12 @@ export function AssistantMessage({ ev, streaming }: Props) {
             Broadened search
           </span>
         )}
-        {ev.unavailable && (
-          <span className="chip chip-warn" title="A search could not reach the knowledge base">
-            Knowledge base unavailable
-          </span>
-        )}
-        {streaming && ev.pendingTools > 0 && <span className="chip muted">Searching…</span>}
       </div>
 
       {ev.text ? (
         <RichText text={ev.text} />
       ) : (
-        streaming && (
-          <div className="typing" aria-label="Answer is being prepared">
-            <span />
-            <span />
-            <span />
-          </div>
-        )
+        streaming && <Working stage={ev.searches === 0 ? "thinking" : ev.pendingTools > 0 ? "searching" : "writing"} />
       )}
 
       {ev.disclosure?.pending && (

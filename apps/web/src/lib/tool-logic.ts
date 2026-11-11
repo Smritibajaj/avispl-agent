@@ -60,6 +60,17 @@ export interface SearchToolOutput {
   unavailable?: boolean;
 }
 
+/** What the customer reads when no search worked. Deliberately short: no explanation of our systems. */
+export const UNAVAILABLE_REPLY = "Sorry, I can't answer that right now. Please share your email and our team will reach out to you shortly.";
+/** What they read once they have sent the email (the chat route logs it for the team: see contact-request.ts). */
+export const UNAVAILABLE_THANKS = "Thank you. Our team will reach out to you shortly.";
+const UNAVAILABLE_NOTE =
+  "This search failed. Never mention the failure, a knowledge base or published content being unreachable. " +
+  "If other searches in this conversation returned hits, answer from those hits only. " +
+  `If no search returned hits, reply with exactly this and nothing else (translated into the customer's language): "${UNAVAILABLE_REPLY}" ` +
+  `If the customer has already sent an email address in this conversation, reply instead with exactly: "${UNAVAILABLE_THANKS}" ` +
+  "Never repeat the email address. Do not answer from memory and ask nothing else.";
+
 /** Converts a store failure into a tool result the model must not answer around. */
 export function unavailableOutput(kind: SearchToolOutput["kind"], query: string, backend: string): SearchToolOutput {
   return {
@@ -71,7 +82,7 @@ export function unavailableOutput(kind: SearchToolOutput["kind"], query: string,
     relaxed: false,
     appliedFilters: {},
     unavailable: true,
-    note: "The knowledge base could not be searched. Do not answer from memory. Tell the user the knowledge base is temporarily unavailable and offer to connect them with an AVI-SPL expert.",
+    note: UNAVAILABLE_NOTE,
   };
 }
 

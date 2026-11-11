@@ -22,7 +22,7 @@ export interface HydraStoreOptions {
   apiKey?: string;
   database?: string;
   collection?: string;
-  /** Per-query deadline (ms). Default 5000. */
+  /** Per-query deadline (ms). Default 12000, or HYDRADB_TIMEOUT_MS (hosted queries measured at 7 to 9 s on 2026-11-11). */
   timeoutMs?: number;
   /** Env to read when a field above is not given. Default process.env. */
   env?: Record<string, string | undefined>;
@@ -35,7 +35,8 @@ export interface StoreDiagnostic {
     | "missing_chunk_metadata" // a citation field was absent from chunk.metadata
     | "dropped_hit" // a chunk could not be cited (no valid URL) or contradicted the hard filters
     | "dropped_filter_value" // model sent a value outside the vocabulary
-    | "text_query_failed"; // the parallel exactTerms keyword query failed; hybrid results still returned
+    | "text_query_failed" // the parallel exactTerms keyword query failed; hybrid results still returned
+    | "query_retried"; // the main query hit a transient server error and was sent once more
   detail: string;
   chunkId?: string;
 }
@@ -141,7 +142,8 @@ export function planSearch(req: SearchRequest, target: { database: string; colle
 
 export function createHydraKnowledgeStore(opts: HydraStoreOptions = {}): KnowledgeStore {
   let api: HydraApi | undefined;
-  const timeoutMs = opts.timeoutMs ?? 5000;
+  const envTimeout = Number((opts.env ?? process.env).HYDRADB_TIMEOUT_MS);
+  const timeoutMs = opts.timeoutMs ?? (envTimeout > 0 ? envTimeout : 12_000);
   const diag = (d: StoreDiagnostic) => opts.onDiagnostic?.(d);
 
   // Lazy: importing/constructing the store must not throw at build time when env is absent.
@@ -156,7 +158,15 @@ export function createHydraKnowledgeStore(opts: HydraStoreOptions = {}): Knowled
 
   async function runQueries(query: string, filters: MetadataFilters, exactTerms: string[]) {
     const a = getApi();
-    const mainP = a.query({ ...MAIN_QUERY, query, metadataFilters: filters }, { timeoutMs, maxRetries: 0 });
+    // HydraDB answers some queries with a fast "transient backend error" (HTTP 5xx): try those once more.
+    // A timeout is not retried: a second full wait would use up the answer's time budget.
+    const mainBody = { ...MAIN_QUERY, query, metadataFilters: filters };
+    const mainP = a.query(mainBody, { timeoutMs, maxRetries: 0 }).catch((e: unknown) => {
+      const transient = e instanceof HydraError && (e.kind === "network" || (e.kind === "request" && (e.status ?? 0) >= 500));
+      if (!transient) throw e;
+      diag({ kind: "query_retried", detail: e.message });
+      return a.query(mainBody, { timeoutMs, maxRetries: 0 });
+    });
     const textP: Promise<QueryOutcome | null> = exactTerms.length
       ? a.query(
           { type: "knowledge", queryBy: "text", query: exactTerms.join(" "), maxResults: MAIN_QUERY.maxResults, graphContext: false, metadataFilters: filters },

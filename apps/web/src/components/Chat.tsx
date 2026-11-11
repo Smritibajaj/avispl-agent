@@ -7,6 +7,7 @@ import { GOLDEN_QUERIES } from "../lib/golden-queries";
 import { extractEvidence } from "../lib/message-evidence";
 import type { ChatMessage } from "../lib/tools";
 import { AssistantMessage } from "./AssistantMessage";
+import { Working } from "./Working";
 import { BrandLogo } from "./BrandLogo";
 
 export { GOLDEN_QUERIES };
@@ -342,11 +343,7 @@ export function Chat({
 
                 {status === "submitted" && messages[messages.length - 1]?.role === "user" && (
                   <div className="msg msg-assistant">
-                    <div className="typing" aria-label="Thinking">
-                      <span />
-                      <span />
-                      <span />
-                    </div>
+                    <Working stage="thinking" />
                   </div>
                 )}
 

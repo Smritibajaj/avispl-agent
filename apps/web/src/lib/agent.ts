@@ -7,7 +7,7 @@ import type { ProviderOptions } from "./model";
 import { createTools, type ChatMessage } from "./tools";
 
 export const MAX_STEPS = 6;
-export const TOTAL_TIMEOUT_MS = 45_000;
+export const TOTAL_TIMEOUT_MS = 60_000;
 export const DEFAULT_MAX_OUTPUT_TOKENS = 3000;
 /**
  * Pause between words sent to the browser. After a tool result, the Anthropic API holds back the first seconds of
@@ -36,7 +36,7 @@ export async function createChatResponse(opts: {
   abortSignal?: AbortSignal;
   providerOptions?: ProviderOptions;
   maxOutputTokens?: number;
-  /** Total timeout for the whole answer (default 45 s). */
+  /** Total timeout for the whole answer (default 60 s). */
   totalTimeoutMs?: number;
   /** Pause between words (default WORD_DELAY_MS); null sends text as it arrives (tests). */
   wordDelayMs?: number | null;
