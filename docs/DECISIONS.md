@@ -125,3 +125,18 @@ Facts written by `pnpm hydra smoke` (packages/hydra/src/scripts/smoke.ts). Raw J
 - Fallback when no search returns anything (owner wording): "Sorry, I can't answer that right now. Please share your email and our team will reach out to you shortly." After they send an email: "Thank you. Our team will reach out to you shortly."
 - Owner decision: that email is written only to the server log, as a `[contact-request]` line with the unanswered question. Nothing is emailed or stored elsewhere, so someone has to read the Vercel logs.
 - While an answer is prepared the chat shows a spinner with a status line, and after 12 s adds that it is taking longer than usual.
+
+### Expert briefs (2026-11-11, owner request)
+
+- Owner: the database held sections but not the content a meeting-room expert needs at each stage; feed "sensible data, not the exact words".
+- An **expert brief** is a knowledge record written in our own words from the published, meeting-room relevant section records of ONE source at ONE journey stage (several briefs when a source covers separate subjects, for example catalogue articles or a long FAQ). It states every fact the sections state, says when to use it, and where true names what the source does not say (prices, timelines).
+- Briefs are ADDED next to the section records; nothing was deleted. A brief has the source's URL, content type and `sourceId`, the union of its sections' tags, `status: published`, `crawlNotes: "expert brief ..."`, and forceful relations to the sections it restates.
+- Rule 1 still applies: a brief may only restate its sections. `knowledge:build` refuses a brief whose numbers do not occur in its sections, and lists copied runs of 12+ words and names missing from the sections for a person to read.
+- Files: authored briefs in `packages/ingest/knowledge/briefs/*.json` (tracked); built file `packages/ingest/data/records.knowledge.jsonl` (ignored, like all of `data/`).
+- Commands:
+  ```bash
+  pnpm ingest knowledge:bundle          # one input file per source and stage, for the writer
+  pnpm ingest knowledge:build           # validate briefs, write data/records.knowledge.jsonl + reports/knowledge-report.md
+  pnpm hydra ingest --file <abs path>/records.knowledge.jsonl --relations-to=<abs path>/records.jsonl --confirm-bulk
+  ```
+- When a source is re-scraped and its section ids change, `knowledge:build` fails on the stale `basedOn` ids: rewrite that brief from the new sections.
