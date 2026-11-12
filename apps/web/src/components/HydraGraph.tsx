@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState, type FormEvent } from "react";
 import type { GraphTriplet } from "@avispl/shared";
 import { buildGraph, GRAPH_H, GRAPH_W, type GEdge, type GNode } from "../lib/graph/graph-view";
+import { BrandText } from "./BrandText";
 
 interface Payload {
   query: string;
@@ -64,6 +65,7 @@ export function HydraGraph() {
     <main className="hg">
       <header className="hg-head">
         <div>
+          <BrandText className="hg-brand" />
           <h1>HydraDB knowledge graph</h1>
           <p className="hg-sub">
             The relationships HydraDB found in AVI-SPL's content for your topic: entities as dots, relations as lines. Click a dot to see its links and where they come from.

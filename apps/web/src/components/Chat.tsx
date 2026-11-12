@@ -10,6 +10,7 @@ import { extractEvidence } from "../lib/chat/message-evidence";
 import type { ChatMessage } from "../lib/agent/tools";
 import { AssistantMessage } from "./AssistantMessage";
 import { Working } from "./Working";
+import { BrandText } from "./BrandText";
 
 export { GOLDEN_QUERIES };
 
@@ -244,6 +245,7 @@ export function Chat({ modelMode }: { modelMode: "anthropic" | "gateway" | "unco
     <div className={`app${sidebarOpen ? "" : " sidebar-collapsed"}${drawerOpen ? " drawer-open" : ""}`}>
       <aside className="sidebar" aria-label="Chats">
         <div className="sidebar-head">
+          <BrandText />
           <button type="button" className="icon-btn" onClick={toggleSidebar} aria-label="Close sidebar" title="Close sidebar">
             <Icon d={ICON.sidebar} />
           </button>
@@ -285,6 +287,7 @@ export function Chat({ modelMode }: { modelMode: "anthropic" | "gateway" | "unco
             <button type="button" className="icon-btn topbar-new" onClick={startNewChat} aria-label="New chat" title="New chat">
               <Icon d={ICON.newChat} />
             </button>
+            <BrandText className="topbar-brand" />
             <span className="topbar-title">Meeting-room advisor</span>
           </div>
           <button

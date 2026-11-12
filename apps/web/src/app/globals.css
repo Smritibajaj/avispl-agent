@@ -108,7 +108,10 @@ h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
 /* Sidebar */
 .sidebar { width: 260px; flex: none; display: flex; flex-direction: column; gap: 4px; padding: 10px; background: var(--side-bg); color: var(--side-text); }
 .sidebar-collapsed .sidebar { display: none; }
-.sidebar-head { display: flex; align-items: center; justify-content: flex-end; padding: 6px 2px 12px 10px; }
+.sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 6px 2px 12px 10px; }
+/* The AVI-SPL name as text (components/BrandText.tsx): heavy capitals, teal hyphen. */
+.brand-text { flex: none; font-family: var(--font-heading); font-size: 1.3rem; font-weight: 800; letter-spacing: 0.03em; line-height: 1; white-space: nowrap; color: var(--side-text); }
+.brand-dash { color: var(--teal); }
 .sidebar .icon-btn { color: var(--side-muted); }
 .sidebar .icon-btn:hover { background: var(--side-hover); color: var(--side-text); }
 .icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer; }
@@ -133,7 +136,10 @@ h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
 .topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; min-height: 56px; border-bottom: 1px solid var(--line); }
 .topbar-left { display: flex; align-items: center; gap: 4px; min-width: 0; }
 .topbar-title { font-family: var(--font-heading); font-size: 0.82rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--heading); padding: 0 8px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.sidebar-open-btn, .topbar-new { display: none; }
+.sidebar-open-btn, .topbar-new, .topbar-brand { display: none; }
+.topbar-brand { font-size: 1.15rem; margin: 0 6px 0 8px; color: var(--heading); }
+.sidebar-collapsed .topbar-brand { display: block; }
+.hg-brand { display: block; margin-bottom: 10px; color: var(--text); }
 .sidebar-collapsed .sidebar-open-btn, .sidebar-collapsed .topbar-new { display: inline-flex; }
 
 /* Status strip: data / model honesty labels */
@@ -214,6 +220,8 @@ h1, h2, h3, h4 { font-family: var(--font-heading); color: var(--heading); }
   .drawer-open .sidebar { transform: translateX(0); }
   .drawer-backdrop { display: block; position: fixed; inset: 0; z-index: 20; background: rgba(0, 0, 0, 0.45); }
   .sidebar-open-btn, .topbar-new { display: inline-flex; }
+  .topbar-brand { display: block; }
+  .topbar-title { display: none; }
   .side-chat-delete { opacity: 1; }
   .suggestions { grid-template-columns: 1fr; }
   .welcome { justify-content: flex-start; padding-top: 12vh; }
